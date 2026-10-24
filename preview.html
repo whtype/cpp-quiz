@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C++ 刷题 · 界面预览 v2.6</title>
+<title>C++ 刷题 · 600 题</title>
 <style>
   :root{
     --paper:#F6F3EC; --paper2:#EFEAE0; --card:#fff;
@@ -382,6 +382,15 @@
     font-size:12.5px;cursor:pointer;color:#1B1917}
   .sbtn:hover{border-color:#D9542B;color:#D9542B}
   @media(max-width:900px){.side{display:none}}
+
+  /* 真手机打开时：拆掉模拟外框，整屏就是小程序界面本身 */
+  @media(max-width:520px){
+    body{padding:0;gap:0;display:block;background:var(--paper);
+      min-height:100vh;min-height:100dvh;align-items:stretch}
+    .phone{width:100%;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+    .sbar{display:none}
+    .screen{padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+  }
   /* 截图/静帧模式：加 ?still=1 关掉所有过渡，方便无头浏览器抓最终态 */
   .still *, .still *::before, .still *::after{transition:none!important;animation:none!important}
 </style>

@@ -46,8 +46,12 @@ const CORE = [
   {
     id: 's04', cat: 'syntax', type: 'multi', level: 2,
     q: '下列声明中，"指针变量本身的值（即指向的地址）不可修改"的有哪些？（多选）',
-    code: 'A. const int *p;\nB. int * const p;\nC. const int * const p;\nD. int const *p;',
-    options: ['A', 'B', 'C', 'D'],
+    options: [
+      'const int *p;',
+      'int * const p;',
+      'const int * const p;',
+      'int const *p;'
+    ],
     ans: [1, 2],
     exp: '判断口诀：const 在 * 左侧，修饰的是"指向的数据"；const 在 * 右侧，修饰的是"指针本身"。A 与 D 完全等价（pointer to const），指针可改、数据不可改；B 是 const pointer，指针不可改；C 是两者都不可改。'
   },

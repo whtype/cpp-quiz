@@ -118,6 +118,11 @@ qs.forEach(function (q) {
   })
   if (q.type === 'judge' && (q.options || []).length !== 2) problems.push((q.id || '?') + ' 判断题应为 2 个选项')
   if (!q.exp || q.exp.length < 15) problems.push((q.id || '?') + ' 解析过短')
+  // 选项不能只有字母/序号（真实内容多半躲在 code 里），否则页面上会显示成 "A A"
+  var opts = q.options || []
+  if (opts.length > 1 && opts.every(function (o) {
+    return /^[（(]?[A-Da-d1-4][)）.、]?$/.test(String(o).trim())
+  })) problems.push((q.id || '?') + ' 选项只有字母/序号，内容应该写进 options')
 })
 if (problems.length) problems.slice(0, 8).forEach(bad)
 else ok('共 ' + qs.length + ' 题，id 唯一、答案合法、解析齐全')
