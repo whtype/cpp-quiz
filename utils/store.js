@@ -6,6 +6,8 @@
 var STATS_KEY = 'cpp_quiz_stats_v1'
 var SESSION_KEY = 'cpp_quiz_session_v1'
 var REMOTE_KEY = 'cpp_quiz_remote_v1'
+var PROGRESS_KEY = 'cpp_quiz_progress_v1'
+var PREF_KEY = 'cpp_quiz_pref_v1'
 
 function defaultStats() {
   return {
@@ -96,6 +98,23 @@ function isFav(qid) {
 
 function getFavIds() { return getStats().fav.slice() }
 function getWrongIds() { return getStats().wrong.slice() }
+
+/**
+ * 清掉已经不在题库里的 id。
+ * 在线题库换了源、或者导入的题被清空后，旧 id 会指向不存在的题，
+ * 留着会让「错题本里有 12 条，点进去却一道都没有」。返回被清掉的条数。
+ */
+function prune(kind, validIds) {
+  var s = getStats()
+  var set = {}
+  ;(validIds || []).forEach(function (id) { set[id] = 1 })
+  var key = kind === 'fav' ? 'fav' : 'wrong'
+  var before = s[key].length
+  s[key] = s[key].filter(function (id) { return set[id] })
+  var removed = before - s[key].length
+  if (removed > 0) saveStats(s)
+  return removed
+}
 
 function removeWrong(qid) {
   var s = getStats()
@@ -227,6 +246,59 @@ function resetAll() {
   try {
     wx.removeStorageSync(STATS_KEY)
     wx.removeStorageSync(SESSION_KEY)
+    wx.removeStorageSync(PROGRESS_KEY)
+  } catch (e) {}
+}
+
+/* ---------------- 未完成的练习进度 ----------------
+   退出小程序 / 返回首页后再进来，要能接着上次那题继续，
+   而不是从第 1 题重来。存的是一份轻量快照：题号 + 题目 id 列表 + 已答状态。 */
+
+function saveProgress(p) {
+  try {
+    wx.setStorageSync(PROGRESS_KEY, p)
+  } catch (e) {}
+}
+
+function getProgress() {
+  try {
+    var p = wx.getStorageSync(PROGRESS_KEY)
+    if (!p || !p.list || !p.list.length) return null
+    return p
+  } catch (e) {
+    return null
+  }
+}
+
+function clearProgress() {
+  try {
+    wx.removeStorageSync(PROGRESS_KEY)
+  } catch (e) {}
+}
+
+/** 进度能不能接着做：至少答过一题、且还没到最后一题 */
+function resumable(p) {
+  if (!p || !p.list || !p.list.length) return false
+  var idx = p.idx || 0
+  return idx > 0 && idx < p.list.length - 1
+}
+
+/* ---------------- 轻量偏好（上次选的题数等） ---------------- */
+
+function getPref(key, def) {
+  try {
+    var p = wx.getStorageSync(PREF_KEY) || {}
+    return p[key] === undefined ? def : p[key]
+  } catch (e) {
+    return def
+  }
+}
+
+function setPref(key, val) {
+  try {
+    var p = wx.getStorageSync(PREF_KEY) || {}
+    p[key] = val
+    wx.setStorageSync(PREF_KEY, p)
   } catch (e) {}
 }
 
@@ -238,6 +310,7 @@ module.exports = {
   isFav: isFav,
   getFavIds: getFavIds,
   getWrongIds: getWrongIds,
+  prune: prune,
   removeWrong: removeWrong,
   clearWrong: clearWrong,
   clearFav: clearFav,
@@ -252,5 +325,11 @@ module.exports = {
   getRemote: getRemote,
   mergeRemote: mergeRemote,
   clearRemote: clearRemote,
-  resetAll: resetAll
+  resetAll: resetAll,
+  saveProgress: saveProgress,
+  getProgress: getProgress,
+  clearProgress: clearProgress,
+  resumable: resumable,
+  getPref: getPref,
+  setPref: setPref
 }

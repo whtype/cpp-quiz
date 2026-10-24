@@ -4,10 +4,33 @@ var ui = require('../../utils/ui')
 
 var TILE = [
   { mode: 'seq', name: '顺序练习', desc: '从头逐题推进' },
-  { mode: 'random', name: '随机 20 题', desc: '打乱检验手感' },
+  { mode: 'random', name: '随机练习', desc: '打乱检验手感' },
   { mode: 'wrong', name: '错题重练', desc: '专攻踩过的坑' },
   { mode: 'fav', name: '收藏练习', desc: '挑出来的重点' }
 ]
+
+var MODE_TITLE = {
+  seq: '顺序练习',
+  random: '随机练习',
+  exam: '模拟考试',
+  wrong: '错题重练',
+  fav: '收藏练习'
+}
+
+var CAT_SHORT = {
+  syntax: '语法',
+  algo: '算法',
+  interview: '面试',
+  modern: '新特性'
+}
+
+var COUNT_OPTS = [10, 20, 50, 0]
+
+/* 浮层主按钮文案：有续做点就别直接开新的 */
+function ctaOf(canResume, n) {
+  if (canResume) return '按新题数重来'
+  return n === 0 ? '把这类的题全刷完' : '开始刷 ' + n + ' 题'
+}
 
 Page({
   data: {
@@ -26,7 +49,18 @@ Page({
     recent: [],
     onlineNum: 0,
     cloudOn: false,
-    booting: false
+    booting: false,
+    countOpts: COUNT_OPTS,
+    picker: {
+      open: false,
+      mode: '',
+      cat: '',
+      name: '',
+      count: 20,
+      canResume: false,
+      resumeIdx: 0,
+      resumeTotal: 0
+    }
   },
 
   onLoad: function () {
@@ -50,6 +84,11 @@ Page({
     var answered = s.answered || 0
     var onlineNum = Q.getExtra().length
 
+    // 哪一条练习还有没做完的进度，就在那儿标个「继续」
+    var prog = store.getProgress()
+    var resumeKey = store.resumable(prog) ? (prog.mode + '|' + (prog.cat || '')) : ''
+    var resumeIdx = store.resumable(prog) ? (prog.idx + 1) : 0
+
     var cats = Q.CATEGORIES.map(function (c) {
       var st = store.catStat(c.key, Q.QUESTIONS)
       return {
@@ -58,7 +97,9 @@ Page({
         desc: c.desc,
         total: st.total,
         done: st.done,
-        percent: st.percent
+        percent: st.percent,
+        resume: resumeKey === ('seq|' + c.key),
+        resumeIdx: resumeIdx
       }
     }).filter(function (c) { return c.total > 0 })
 
@@ -76,7 +117,14 @@ Page({
       else if (t.mode === 'random') num = 20
       else if (t.mode === 'wrong') num = s.wrong.length
       else num = s.fav.length
-      return { mode: t.mode, name: t.name, desc: t.desc, num: num }
+      return {
+        mode: t.mode,
+        name: t.name,
+        desc: t.desc,
+        num: num,
+        resume: resumeKey === (t.mode + '|'),
+        resumeIdx: resumeIdx
+      }
     })
 
     var app = getApp()
@@ -111,7 +159,71 @@ Page({
       ui.toast('还没有收藏题目')
       return
     }
-    wx.navigateTo({ url: '/pages/practice/practice?mode=' + mode + '&cat=' + cat })
+
+    // 考试固定 20 题 20 分钟，不用选题数
+    if (mode === 'exam') {
+      wx.navigateTo({ url: '/pages/practice/practice?mode=exam' })
+      return
+    }
+
+    var prog = store.getProgress()
+    var canResume = store.resumable(prog) && prog.mode === mode && (prog.cat || '') === cat
+    var last = store.getPref('count', mode === 'random' ? 20 : 20)
+    if (mode === 'wrong' || mode === 'fav') last = store.getPref('count', 0)
+
+    var name = MODE_TITLE[mode] || '练习'
+    if (cat && CAT_SHORT[cat]) name = CAT_SHORT[cat] + ' · ' + name
+
+    this.setData({
+      picker: {
+        open: true,
+        mode: mode,
+        cat: cat,
+        name: name,
+        count: last,
+        cta: ctaOf(canResume, last),
+        canResume: canResume,
+        resumeIdx: canResume ? (prog.idx + 1) : 0,
+        resumeTotal: canResume ? (prog.list || []).length : 0
+      }
+    })
+  },
+
+  pickCount: function (e) {
+    var n = parseInt(e.currentTarget.dataset.n, 10)
+    if (isNaN(n)) n = 20
+    this.setData({
+      'picker.count': n,
+      'picker.cta': ctaOf(false, n)
+    })
+  },
+
+  closePicker: function () {
+    this.setData({ 'picker.open': false })
+  },
+
+  noop: function () {},
+
+  /* 继续上次：题数沿用上次的快照 */
+  resumeLast: function () {
+    var p = this.data.picker
+    var prog = store.getProgress()
+    var count = prog && prog.count ? prog.count : p.count
+    this.setData({ 'picker.open': false })
+    wx.navigateTo({
+      url: '/pages/practice/practice?mode=' + p.mode + '&cat=' + p.cat + '&count=' + count
+    })
+  },
+
+  /* 按选中的题数从头开始 */
+  startPractice: function () {
+    var p = this.data.picker
+    store.setPref('count', p.count)
+    this.setData({ 'picker.open': false })
+    wx.navigateTo({
+      url: '/pages/practice/practice?mode=' + p.mode + '&cat=' + p.cat +
+        '&count=' + p.count + '&restart=1'
+    })
   },
 
   goWrong: function () {

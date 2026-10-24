@@ -10,6 +10,12 @@
   <!-- 进度 -->
   <view class="pline"><view class="pline-in" style="width: {{percent}}%"></view></view>
 
+  <!-- 接着上次 -->
+  <view class="resume" wx:if="{{resumed}}">
+    <text class="resume-t">接着上次 · 第 {{idx + 1}} / {{total}} 题</text>
+    <text class="resume-x" bindtap="restart">重新开始</text>
+  </view>
+
   <view class="body">
 
     <!-- 题头 -->
@@ -60,7 +66,7 @@
   <!-- 底部操作 -->
   <view class="bb">
     <view class="bb-ico {{idx === 0 ? 'off' : ''}}" bindtap="prev">‹</view>
-    <view class="bb-main" bindtap="next">{{isLast ? (isExam ? '交卷' : '完成') : '下一题'}}</view>
+    <view class="bb-main" bindtap="next">{{isLast ? (isExam ? '交卷' : '完成') : (answered ? '下一题' : '跳过')}}</view>
     <view class="bb-ico {{faved ? 'on' : ''}}" bindtap="toggleFav">{{faved ? '★' : '☆'}}</view>
   </view>
 

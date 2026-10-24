@@ -2973,12 +2973,30 @@ function setExtra(list) {
 
 function getExtra() { return EXTRA }
 
-function getById(id) { return MAP[id] || null }
+/**
+ * 按 id 查题：先查索引，查不到再线性找一遍并顺手补进索引。
+ * —— 索引（MAP）没建好时也要能用，绝不能让错题本 / 收藏 / 结果页静默变空。
+ */
+function findById(id) {
+  if (!id) return null
+  var q = MAP[id]
+  if (q) return q
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    if (QUESTIONS[i].id === id) {
+      MAP[id] = QUESTIONS[i]
+      return QUESTIONS[i]
+    }
+  }
+  return null
+}
+
+function getById(id) { return findById(id) }
 
 function getByIds(ids) {
   var out = []
   ;(ids || []).forEach(function (id) {
-    if (MAP[id]) out.push(MAP[id])
+    var q = findById(id)
+    if (q) out.push(q)
   })
   return out
 }
@@ -3000,6 +3018,11 @@ var CppQuizData = {
   setExtra: setExtra,
   getExtra: getExtra
 }
+
+// 模块加载时先建一次索引。
+// 之前只在 setExtra() 里 rebuild，而没有在线题库缓存时永远不会走到那里，
+// 导致 MAP 一直是空对象 —— 错题本、收藏、结果页的逐题解析全部查不到题（v2.5 修）。
+rebuild()
 
 // 兼容：小程序 require + 浏览器 <script> 直接加载
 if (typeof module !== 'undefined' && module.exports) {

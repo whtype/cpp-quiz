@@ -53,32 +53,42 @@ view, text, button, textarea, picker { box-sizing: border-box; }
   background: #f6f3ec;
 }
 
-/* 自定义导航：只放标题和返回，尽量轻 */
+/* 自定义导航：只放标题和返回，尽量轻
+   ⚠️ box-sizing 必须是 content-box：
+   各页面用 style="padding-top:{{statusBar}}px" 让出状态栏，若走全局的 border-box，
+   88rpx 会连 padding 一起算，内容区被压成 0，返回键就会被顶进状态栏里——
+   看得见、但点不动（iPhone 灵动岛机型状态栏更高，尤其明显）。 */
 .nav {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  box-sizing: content-box;
   height: 88rpx;
-  padding-bottom: 8rpx;
   position: relative;
+  flex-shrink: 0;
 }
 
+/* 热区按微信建议做到 44pt（88rpx），视觉上仍贴着左边 */
 .nav-back {
-  width: 56rpx;
-  height: 56rpx;
-  margin-left: -12rpx;
+  width: 88rpx;
+  height: 88rpx;
+  margin-left: -22rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36rpx;
+  font-size: 42rpx;
+  font-weight: 300;
   color: var(--ink);
   line-height: 1;
 }
+
+.nav-back:active { opacity: 0.5; }
 
 .nav-title {
   flex: 1;
   font-size: 30rpx;
   font-weight: 600;
   letter-spacing: 1rpx;
+  line-height: 1.25;
   color: var(--ink);
   white-space: nowrap;
   overflow: hidden;
@@ -88,9 +98,13 @@ view, text, button, textarea, picker { box-sizing: border-box; }
 .nav-title.center { text-align: center; }
 
 .nav-act {
+  min-height: 88rpx;
+  display: flex;
+  align-items: center;
+  margin-right: -8rpx;
+  padding: 0 0 0 24rpx;
   font-size: 25rpx;
   color: var(--ink-2);
-  padding: 8rpx 0 8rpx 16rpx;
 }
 
 /* ---------------- 排版 ---------------- */
@@ -273,7 +287,6 @@ view, text, button, textarea, picker { box-sizing: border-box; }
 }
 
 .row:active { background: rgba(27, 25, 23, 0.025); }
-
 .row .rt { flex: 1; min-width: 0; }
 .row .rn { font-size: 30rpx; font-weight: 500; color: var(--ink); }
 .row .rd { font-size: 23rpx; color: var(--ink-3); margin-top: 4rpx; }
@@ -282,8 +295,12 @@ view, text, button, textarea, picker { box-sizing: border-box; }
   color: var(--ink-3);
   margin-left: 16rpx;
   font-family: Georgia, serif;
+  display: flex;
+  align-items: baseline;
+  flex-shrink: 0;
 }
-.row .rv b { color: var(--ink); font-weight: 400; }
+.row .rv-n { color: var(--ink); margin-right: 6rpx; }
+.row .rv-u { font-size: 22rpx; color: var(--ink-4); }
 .row .rarw { font-size: 30rpx; color: var(--ink-4); margin-left: 12rpx; }
 
 /* ---------------- 代码 ---------------- */
@@ -346,3 +363,78 @@ view, text, button, textarea, picker { box-sizing: border-box; }
 .d2 { animation-delay: 0.08s; }
 .d3 { animation-delay: 0.12s; }
 .d4 { animation-delay: 0.16s; }
+
+/* ---------------- 底部浮层（练习页答题卡 / 首页选题数共用） ---------------- */
+
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(27, 25, 23, 0.34);
+  z-index: 50;
+  animation: fadeIn 0.2s ease both;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--paper);
+  border-radius: 34rpx 34rpx 0 0;
+  padding: 18rpx 40rpx calc(28rpx + env(safe-area-inset-bottom));
+  animation: sheetUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  max-height: 76vh;
+}
+
+.sh-handle {
+  width: 68rpx;
+  height: 6rpx;
+  border-radius: 6rpx;
+  background: var(--ink-4);
+  margin: 0 auto 26rpx;
+}
+
+/* 选题数 */
+.pk-t {
+  font-size: 36rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  color: var(--ink);
+}
+
+.pk-s {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: var(--ink-3);
+}
+
+.pk-row {
+  display: flex;
+  margin: 34rpx -8rpx 30rpx;
+}
+
+.pk-c {
+  flex: 1;
+  height: 88rpx;
+  margin: 0 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx solid var(--line);
+  border-radius: 16rpx;
+  background: var(--card);
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+
+.pk-c.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+.pk-go { margin-top: 16rpx; }

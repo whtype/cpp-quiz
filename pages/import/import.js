@@ -39,7 +39,7 @@ Page({
     this.setData({ catNames: names, catKeys: keys })
   },
 
-  goBack: function () { wx.navigateBack() },
+  goBack: function () { ui.back() },
 
   onInput: function (e) {
     this.setData({ text: e.detail.value, result: null, previewList: [] })

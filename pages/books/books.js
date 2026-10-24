@@ -21,7 +21,7 @@ Page({
     this.setData({ freeList: free, classicList: classic })
   },
 
-  goBack: function () { wx.navigateBack() },
+  goBack: function () { ui.back() },
 
   hideHint: function () { this.setData({ showHint: false }) },
 

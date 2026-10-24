@@ -7,6 +7,10 @@
         "type": "file"
       },
       {
+        "value": "index.html",
+        "type": "file"
+      },
+      {
         "value": "README.md",
         "type": "file"
       },
@@ -17,6 +21,18 @@
       {
         "value": "sample-questions.json",
         "type": "file"
+      },
+      {
+        "type": "file",
+        "value": "BANK-PLAN.md"
+      },
+      {
+        "type": "folder",
+        "value": "tools"
+      },
+      {
+        "type": "folder",
+        "value": "data/qa"
       }
     ],
     "include": []

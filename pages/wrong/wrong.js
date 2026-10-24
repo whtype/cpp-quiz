@@ -24,13 +24,18 @@ Page({
     this.build()
   },
 
-  goBack: function () { wx.navigateBack() },
+  goBack: function () { ui.back() },
 
   onShow: function () { this.build() },
 
   build: function () {
-    var ids = this.data.tab === 'wrong' ? store.getWrongIds() : store.getFavIds()
+    var kind = this.data.tab === 'wrong' ? 'wrong' : 'fav'
+    var ids = kind === 'wrong' ? store.getWrongIds() : store.getFavIds()
     var qs = Q.getByIds(ids)
+    // 自愈：题库变动后旧 id 会失效，清掉它们，别让「计数有 12、列表是空」
+    if (qs.length !== ids.length) {
+      store.prune(kind, qs.map(function (q) { return q.id }))
+    }
     var list = qs.map(function (q) {
       return {
         id: q.id,

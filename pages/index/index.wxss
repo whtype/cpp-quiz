@@ -163,6 +163,12 @@
   color: var(--ink-3);
 }
 
+/* 有没做完的进度：把说明换成一枚暖橙提示，一眼看得见 */
+.tile-rs {
+  color: var(--accent);
+  letter-spacing: 0.5rpx;
+}
+
 /* 分类行 */
 .cat {
   display: flex;
@@ -186,9 +192,19 @@
 .cat-b { flex: 1; min-width: 0; padding-right: 24rpx; }
 
 .cat-n {
+  display: flex;
+  align-items: baseline;
   font-size: 29rpx;
   font-weight: 500;
   color: var(--ink);
+}
+
+.cat-rs {
+  margin-left: 14rpx;
+  font-size: 20rpx;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.5rpx;
 }
 
 .cat-d {

@@ -45,7 +45,7 @@ Page({
   },
 
   goBack: function () {
-    wx.navigateBack()
+    ui.back()
   },
 
   /** 刷新全部已启用的源 */

@@ -92,7 +92,10 @@ Page({
     timeText: '00:00',
     cardOpen: false,
     flags: [],
-    letters: LETTERS
+    letters: LETTERS,
+    count: 0,          // 本轮题数上限，0 = 全部
+    resumed: false,    // 是否接着上次的进度
+    resumedFrom: 0     // 接着的第几题（1 基）
   },
 
   answers: {},   // { qid: { picked: [], answered: bool, right: bool } }
@@ -103,30 +106,77 @@ Page({
     ui.attach(this)
     var mode = options.mode || 'seq'
     var cat = options.cat || ''
-    var list = this.buildList(mode, cat)
+    var count = parseInt(options.count || 0, 10) || 0
+    var forceNew = options.restart === '1'
+    var isExam = mode === 'exam'
+
+    var title = buildTitle(mode, cat)
+    wx.setNavigationBarTitle({ title: title })
+
+    /* 先看有没有能接着做的：同一个模式 + 同一个分类，且上次没答到最后一题 */
+    var prog = store.getProgress()
+    var canResume = !forceNew && !isExam && store.resumable(prog) &&
+      prog.mode === mode && (prog.cat || '') === cat
+
+    var list, fromIdx = 0, answers = {}, elapsed = 0, resumed = false
+
+    if (canResume) {
+      var restored = Q.getByIds(prog.list)
+      if (restored.length === prog.list.length && restored.length) {
+        list = restored
+        fromIdx = Math.min(prog.idx || 0, restored.length - 1)
+        answers = prog.answers || {}
+        elapsed = prog.elapsed || 0
+        // 题数沿用上次的快照，否则点「重新开始」会变成全量
+        count = prog.count || count
+        resumed = true
+      } else {
+        // 题目本身失效了（在线题库换源），别硬撑，从头来
+        store.clearProgress()
+        list = this.buildList(mode, cat, count)
+      }
+    } else {
+      list = this.buildList(mode, cat, count)
+    }
 
     if (!list.length) {
-      wx.showToast({ title: '暂无可练习的题目', icon: 'none' })
-      setTimeout(function () { wx.navigateBack() }, 1200)
+      var tip = '暂无可练习的题目'
+      if (mode === 'wrong') {
+        store.prune('wrong', [])
+        tip = '错题已失效，已清理'
+      } else if (mode === 'fav') {
+        store.prune('fav', [])
+        tip = '收藏已失效，已清理'
+      }
+      wx.showToast({ title: tip, icon: 'none' })
+      setTimeout(function () { ui.back() }, 1200)
       return
     }
 
-    var isExam = mode === 'exam'
-    var title = buildTitle(mode, cat)
-    wx.setNavigationBarTitle({ title: title })
+    this.answers = answers || {}
 
     this.setData({
       mode: mode,
       cat: cat,
+      count: count,
       modeName: title,
       list: list,
       total: list.length,
+      idx: fromIdx,
+      elapsed: elapsed,
+      timeText: fmtTime(isExam ? Math.max(EXAM_LIMIT - elapsed, 0) : elapsed),
       isExam: isExam,
-      instant: !isExam
+      instant: !isExam,
+      resumed: resumed,
+      resumedFrom: fromIdx + 1
     })
 
     this.render()
     this.startTimer()
+  },
+
+  onHide: function () {
+    this.persist()
   },
 
   onUnload: function () {
@@ -134,15 +184,50 @@ Page({
       clearInterval(this.timer)
       this.timer = null
     }
+    this.persist()
   },
 
-  buildList: function (mode, cat) {
+  /* 把当前进度存下来：退出小程序 / 返回首页后再进来能接着做 */
+  persist: function () {
+    if (this.finished || this.data.isExam) return
+    var list = this.data.list
+    if (!list || !list.length) return
+    store.saveProgress({
+      mode: this.data.mode,
+      cat: this.data.cat,
+      count: this.data.count,
+      idx: this.data.idx,
+      elapsed: this.data.elapsed,
+      list: list.map(function (q) { return q.id }),
+      answers: this.answers,
+      savedAt: Date.now()
+    })
+  },
+
+  /* 顶部提示条上的「重来」 */
+  restart: function () {
+    store.clearProgress()
+    var url = '/pages/practice/practice?mode=' + this.data.mode +
+      '&cat=' + this.data.cat + '&count=' + this.data.count + '&restart=1'
+    wx.redirectTo({ url: url })
+  },
+
+  buildList: function (mode, cat, count) {
+    var n = count > 0 ? count : 0
     var pool = Q.filterByCat(cat)
-    if (mode === 'random') return shuffle(pool).slice(0, 20)
+    if (mode === 'random') return shuffle(pool).slice(0, n || 20)
     if (mode === 'exam') return shuffle(Q.QUESTIONS).slice(0, EXAM_COUNT)
-    if (mode === 'wrong') return Q.getByIds(store.getWrongIds())
-    if (mode === 'fav') return Q.getByIds(store.getFavIds())
-    return pool
+    if (mode === 'wrong' || mode === 'fav') {
+      var kind = mode === 'wrong' ? 'wrong' : 'fav'
+      var ids = kind === 'wrong' ? store.getWrongIds() : store.getFavIds()
+      var qs = Q.getByIds(ids)
+      // 自愈：在线题库换源后旧 id 会失效，顺手把查不到的清掉
+      if (qs.length !== ids.length) {
+        store.prune(kind, qs.map(function (q) { return q.id }))
+      }
+      return n ? qs.slice(0, n) : qs
+    }
+    return n ? pool.slice(0, n) : pool
   },
 
   startTimer: function () {
@@ -214,6 +299,8 @@ Page({
       flags: flagArr,
       answeredCount: flagArr.filter(function (f) { return f !== 0 }).length
     })
+
+    this.persist()
   },
 
   noop: function () {},
@@ -229,12 +316,12 @@ Page({
           if (!r.confirm) return
           that.finished = true
           if (that.timer) { clearInterval(that.timer); that.timer = null }
-          wx.navigateBack()
+          ui.back()
         }
       })
       return
     }
-    wx.navigateBack()
+    ui.back()
   },
 
   onFinishTap: function () {
@@ -298,14 +385,8 @@ Page({
     this.render()
   },
 
+  /* 下一题：没作答也可以直接跳（交卷时按未作答算错） */
   next: function () {
-    var cur = this.data.cur
-    var a = this.answers[cur.id]
-
-    if (this.data.instant && (!a || !a.answered)) {
-      wx.showToast({ title: '请先作答', icon: 'none' })
-      return
-    }
     if (this.data.idx >= this.data.list.length - 1) {
       this.finish(false)
       return
@@ -342,9 +423,11 @@ Page({
     if (this.timer) { clearInterval(this.timer); this.timer = null }
 
     var correct = 0
+    var skipped = 0
     var items = list.map(function (q) {
       var a = self.answers[q.id] || { picked: [], answered: false, right: false }
       var right = a.answered && a.right
+      if (!a.answered) skipped += 1
       if (!self.data.instant) {
         // 考试模式：此刻统一计入统计
         store.record(q.id, !!right)
@@ -368,6 +451,7 @@ Page({
       modeName: this.data.modeName,
       total: list.length,
       correct: correct,
+      skipped: skipped,
       elapsed: this.data.elapsed,
       timeStr: timeStr,
       items: items
@@ -382,6 +466,9 @@ Page({
       elapsed: this.data.elapsed,
       timeStr: timeStr
     })
+
+    // 这一轮结束了，别再让人「继续」到已完成的进度
+    store.clearProgress()
 
     wx.redirectTo({ url: '/pages/result/result' })
   }

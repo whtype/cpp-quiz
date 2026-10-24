@@ -8,7 +8,7 @@ var CLOUD_ENV = ''
 
 App({
   globalData: {
-    version: '2.2.0',
+    version: '2.6.0',
     cloudEnv: CLOUD_ENV,
     cloudReady: false,
     booting: false,

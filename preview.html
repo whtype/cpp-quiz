@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C++ 刷题 · 界面预览 v2.2</title>
+<title>C++ 刷题 · 界面预览 v2.6</title>
 <style>
   :root{
     --paper:#F6F3EC; --paper2:#EFEAE0; --card:#fff;
@@ -41,8 +41,11 @@
   /* ---------- 基础组件 ---------- */
   .nav{display:flex;align-items:center;height:44px;position:relative}
   .nav-title{flex:1;font-size:15px;font-weight:600;letter-spacing:.5px}
-  .nav-act{font-size:12.5px;color:var(--ink2);padding:4px 0 4px 8px}
-  .nav-back{width:28px;height:28px;margin-left:-6px;display:flex;align-items:center;justify-content:center;font-size:19px;cursor:pointer}
+  .nav-act{display:flex;align-items:center;height:44px;margin-right:-4px;padding:0 0 0 12px;
+    font-size:12.5px;color:var(--ink2);cursor:pointer}
+  .nav-back{width:44px;height:44px;margin-left:-11px;display:flex;align-items:center;justify-content:center;
+    font-size:21px;cursor:pointer}
+  .nav-back:active{opacity:.5}
 
   .kicker{font-size:11px;letter-spacing:3px;color:var(--ink3);text-transform:uppercase}
   .kicker.acc{color:var(--accent)}
@@ -117,6 +120,8 @@
   .tile-n{font-size:28px;line-height:1;letter-spacing:-.5px}
   .tile-l{margin-top:8px;font-size:13.5px;font-weight:500}
   .tile-d{margin-top:2px;font-size:10.5px;color:var(--ink3)}
+  .tile-rs{margin-top:6px;padding-top:5px;border-top:1px dashed var(--line);
+    font-size:10px;color:var(--accent);letter-spacing:.3px}
 
   .cat{display:flex;align-items:center;padding:15px 16px;position:relative;cursor:pointer}
   .cat+.cat:before{content:'';position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--line2)}
@@ -124,6 +129,7 @@
   .cat-b{flex:1;min-width:0;padding-right:12px}
   .cat-n{font-size:14.5px;font-weight:500}
   .cat-d{margin:3px 0 15px;font-size:10.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cat-rs{margin:-10px 0 10px;font-size:10px;color:var(--accent)}
   .cat-v{font-size:13px;color:var(--ink4);letter-spacing:.3px}
   .cat-v .cur{color:var(--ink)}
 
@@ -328,6 +334,29 @@
   .sp-why .k{display:block;font-size:9px;letter-spacing:1.5px;color:var(--ink4)}
   .sp-why .v{display:block;margin-top:4px;font-size:12px;line-height:1.75;color:var(--ink2)}
   .sp-lic{font-size:10px;line-height:1.6;color:var(--ink4);margin-top:12px}
+
+  /* ---------- 选题数浮层（v2.6） ---------- */
+  .pk-kick{font-size:9.5px;letter-spacing:2px;color:var(--ink4)}
+  .pk-t{font-family:Georgia,"Songti SC",serif;font-size:22px;line-height:1.35;margin-top:5px}
+  .pk-s{font-size:11.5px;color:var(--ink3);margin-top:6px}
+  .pk-row{display:flex;gap:8px;margin-top:16px}
+  .pk-c{flex:1;height:52px;border:1px solid var(--line);border-radius:8px;background:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    transition:border-color .15s,background .15s}
+  .pk-c .n{font-family:Georgia,serif;font-size:18px;line-height:1}
+  .pk-c .u{font-size:9.5px;color:var(--ink4);letter-spacing:.5px}
+  .pk-c.on{border-color:var(--accent);background:rgba(217,84,43,.05)}
+  .pk-c.on .n{color:var(--accent)}
+  .pk-go{margin-top:14px;height:46px;border-radius:999px;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:14.5px;letter-spacing:1px}
+  .pk-go:active{background:var(--accent2)}
+  .pk-back{margin-top:10px;text-align:center;font-size:12px;color:var(--ink3);padding:8px 0}
+
+  /* ---------- 练习页续做条（v2.6） ---------- */
+  .resume{display:flex;align-items:center;justify-content:space-between;
+    margin:0 0 1px;padding:8px 0;border-bottom:1px solid var(--line2)}
+  .resume-t{font-size:11.5px;color:var(--ink3)}
+  .resume-x{font-size:11.5px;color:var(--accent)}
   .sp-btns{display:flex;gap:9px;margin-top:17px}
   .sp-btn{flex:1;height:46px;border-radius:23px;display:flex;align-items:center;justify-content:center;
     font-size:14px;letter-spacing:.5px;text-decoration:none;cursor:pointer;border:none;
@@ -369,11 +398,16 @@
 </div>
 
 <div class="side">
-  <h1>C++ 刷题 · v2.2</h1>
+  <h1>C++ 刷题 · v2.6</h1>
   <div class="sub">600 题 · 纸感浅色 · 墨黑字 · 单暖橙｜可直接点按交互</div>
 
   <h2>这一版改了什么</h2>
   <ul>
+    <li><b>退出能接着做</b>：以前刷到第 30 题退出，再进来又从第 1 题开始；现在每次翻页都记下「第几题 + 已答的答案」，再点同一个入口直接回到那一题，首页格子上还会写「继续 · 第 7 题」</li>
+    <li><b>题数可选</b>：点练习先问「这一轮刷多少题」——10 / 20 / 50 / 全部，不再一律从头刷到尾巴</li>
+    <li><b>没作答也能跳过</b>：底部按钮在没选答案时写「跳过」，选了才写「下一题」，不再弹「请先作答」拦着你</li>
+    <li><b>错题本 / 收藏不再空白</b>：题目 id 索引以前要等在线题库加载后才建，没有缓存时永远是空的，于是「有 12 道错题、点进去一道没有」；现在模块加载即建索引，且查不到时自动清理失效 id</li>
+    <li><b>左上角返回键修好了</b>：之前自定义导航栏的 <code>box-sizing</code> 把按钮顶进了状态栏，灵动岛机型（iPhone 15/16/17 系列）看得见却点不着；现在热区放大到 44pt，底座落在标题行内</li>
     <li><b>练习页标题不再一律「顺序练习」</b>：从分类进来显示「算法 · 顺序练习」，考试 / 错题 / 收藏各显示自己的名字，题头再补一枚分类小标签</li>
     <li><b>题库扩到 600 题</b>：语法 / 算法 / 面试各 200，每题都带「为什么」式解析</li>
     <li><b>题库不打包开源题</b>：开源题运行时在线拉取，包体里只有这 600 道中文题</li>
@@ -399,6 +433,13 @@
     <div class="sbtn" onclick="go('wrong')">错题本</div>
     <div class="sbtn" onclick="go('import')">导入</div>
     <div class="sbtn" onclick="go('books')">书架</div>
+  </div>
+
+  <h2>选题数浮层（v2.6）</h2>
+  <div class="btnline">
+    <div class="sbtn" onclick="openPick('seq')">顺序 · 选题数</div>
+    <div class="sbtn" onclick="openPick('seq','algo')">算法 · 选题数</div>
+    <div class="sbtn" onclick="openPick('random')">随机 · 选题数</div>
   </div>
 
   <h2>验收标题（同一页不同入口）</h2>
@@ -446,7 +487,7 @@ var MOCK_ACC = 83
 
 var state = { page: 'home', mode: 'seq', cat: '', tab: 'wrong', openIdx: -1, log: '', logTone: 'dim', loading: false, srcOn: {} }
 
-var MODE_LABEL = { seq: '顺序练习', random: '随机 20 题', exam: '模拟考试', wrong: '错题重练', fav: '收藏练习' }
+var MODE_LABEL = { seq: '顺序练习', random: '随机练习', exam: '模拟考试', wrong: '错题重练', fav: '收藏练习' }
 var CAT_SHORT = { syntax: '语法', algo: '算法', interview: '面试', modern: '新特性' }
 
 /* 标题：从分类进来要能看出在练哪一类，否则每个入口都写「顺序练习」会误导 */
@@ -457,7 +498,7 @@ function titleOf() {
 }
 
 /* -------- 答题状态 -------- */
-var cur = { list: [], idx: 0, answers: {} }
+var cur = { list: [], idx: 0, answers: {}, resumed: false }
 
 function shuffle(a) {
   a = a.slice()
@@ -467,20 +508,69 @@ function shuffle(a) {
   return a
 }
 
-function startPractice(mode, cat) {
+/* 上次停在哪 —— 预览页用假的，真机走 Storage */
+var RESUME_AT = { seq: 6, random: 0, 'seq-syntax': 23, 'seq-algo': 0, 'seq-interview': 0 }
+var MODE_CN = { seq: '顺序练习', random: '随机练习', exam: '模拟考试', wrong: '错题重练', fav: '收藏练习' }
+var COUNT_OPTS = [10, 20, 50, 0]
+
+function startPractice(mode, cat, count) {
   cat = cat || ''
   state.mode = mode
   state.cat = cat
   var pool = cat ? quiz.QUESTIONS.filter(function (q) { return q.cat === cat }) : quiz.QUESTIONS
   if (!pool.length) pool = quiz.QUESTIONS
-  if (mode === 'random') cur.list = shuffle(pool).slice(0, 20)
-  else if (mode === 'exam') cur.list = shuffle(pool).slice(0, 20)
+  if (mode === 'random' || mode === 'exam') cur.list = shuffle(pool).slice(0, count || 20)
   else if (mode === 'wrong') cur.list = MOCK_WRONG.map(function (i) { return pool[i] }).filter(Boolean)
   else if (mode === 'fav') cur.list = MOCK_FAV.map(function (i) { return pool[i] }).filter(Boolean)
-  else cur.list = pool.slice(0, 60)
-  cur.idx = 0; cur.answers = {}
+  else cur.list = count > 0 ? pool.slice(0, count) : pool.slice()
+  cur.idx = 0; cur.answers = {}; cur.resumed = false
   state.page = mode === 'exam' ? 'exam' : 'practice'
   render()
+}
+
+/* -------- 选题数浮层（v2.6） -------- */
+var PICKER = { mode: 'seq', cat: '', count: 20 }
+
+function openPick(mode, cat) {
+  cat = cat || ''
+  PICKER = { mode: mode, cat: cat, count: 20 }
+  var key = cat ? mode + '-' + cat : mode
+  var at = RESUME_AT[key]
+
+  var h = ''
+  h += '<div class="sp-handle"></div>'
+  h += '<div class="pk-kick">' + (cat ? (CAT_SHORT[cat] || '') + ' · ' : '') + 'PRACTICE</div>'
+  h += '<div class="pk-t">' + (MODE_CN[mode] || '练习') + '</div>'
+  h += '<div class="pk-s">' + (at ? '上次停在第 ' + (at + 1) + ' 题，接着刷还是重开？' : '这一轮刷多少题？') + '</div>'
+  h += '<div class="pk-row">'
+  COUNT_OPTS.forEach(function (n, i) {
+    h += '<div class="pk-c ' + (i === 1 ? 'on' : '') + '" data-c="' + n + '" onclick="pickCount(this)">'
+    h += '  <span class="n">' + (n || '全部') + '</span><span class="u">题</span>'
+    h += '</div>'
+  })
+  h += '</div>'
+  h += '<div class="pk-go" onclick="goPick(' + (at ? at : -1) + ')">' + (at ? '接着上次（第 ' + (at + 1) + ' 题）' : '开始刷 ' + PICKER.count + ' 题') + '</div>'
+  if (at) h += '<div class="pk-back" onclick="goPick(-1)">按新题数重新开始</div>'
+  showPane(h)
+}
+
+function pickCount(el) {
+  var row = el.parentNode
+  for (var i = 0; i < row.children.length; i++) row.children[i].classList.remove('on')
+  el.classList.add('on')
+  PICKER.count = Number(el.getAttribute('data-c'))
+  var go = el.parentNode.parentNode.querySelector('.pk-go')
+  if (go) go.textContent = PICKER.count ? '开始刷 ' + PICKER.count + ' 题' : '把这一类全刷完'
+}
+
+function goPick(resumeAt) {
+  closeBook()
+  startPractice(PICKER.mode, PICKER.cat, PICKER.count)
+  if (resumeAt >= 0) {
+    cur.idx = Math.min(resumeAt, cur.list.length - 1)
+    cur.resumed = true
+    render()
+  }
 }
 
 /* -------- 渲染 -------- */
@@ -515,7 +605,7 @@ function vHome() {
 
   var tiles = [
     { m: 'seq', n: total, l: '顺序练习', d: '从头逐题推进' },
-    { m: 'random', n: 20, l: '随机 20 题', d: '打乱检验手感' },
+    { m: 'random', n: 20, l: '随机练习', d: '打乱检验手感' },
     { m: 'wrong', n: MOCK_WRONG.length, l: '错题重练', d: '专攻踩过的坑' },
     { m: 'fav', n: MOCK_FAV.length, l: '收藏练习', d: '挑出来的重点' }
   ]
@@ -549,10 +639,12 @@ function vHome() {
   h += '<div class="sec"><span class="t">练 习</span><span class="s" onclick="go(\'wrong\')">错题本 ' + MOCK_WRONG.length + ' →</span></div>'
   h += '<div class="grid">'
   tiles.forEach(function (t) {
-    h += '<div class="tile" onclick="startPractice(\'' + t.m + '\')">'
+    var at = RESUME_AT[t.m]
+    h += '<div class="tile" onclick="openPick(\'' + t.m + '\')">'
     h += '  <div class="tile-n serif">' + t.n + '</div>'
     h += '  <div class="tile-l">' + t.l + '</div>'
     h += '  <div class="tile-d">' + t.d + '</div>'
+    if (at) h += '  <div class="tile-rs">继续 · 第 ' + (at + 1) + ' 题</div>'
     h += '</div>'
   })
   h += '</div>'
@@ -561,9 +653,11 @@ function vHome() {
   h += '<div class="list">'
   cats.forEach(function (c) {
     var p = Math.round((c.done / c.total) * 100)
-    h += '<div class="cat" onclick="startPractice(\'seq\',\'' + c.key + '\')">'
+    var at = RESUME_AT['seq-' + c.key]
+    h += '<div class="cat" onclick="openPick(\'seq\',\'' + c.key + '\')">'
     h += '  <div class="cat-b"><div class="cat-n">' + c.name + '</div>'
     h += '  <div class="cat-d">' + c.desc + '</div>'
+    if (at) h += '  <div class="cat-rs">继续 · 第 ' + (at + 1) + ' 题</div>'
     h += '  <div class="bar"><i style="width:' + p + '%"></i></div></div>'
     h += '  <div class="cat-v serif"><span class="cur">' + c.done + '</span>/' + c.total + '</div>'
     h += '</div>'
@@ -592,7 +686,7 @@ function vHome() {
   h += '    <div class="rd">记录、错题、收藏</div></div><div class="rarw">›</div></div>'
   h += '</div>'
 
-  h += '<div class="foot">C++ 刷题 v2.2 · 内置 ' + quiz.QUESTIONS.length + ' 题 + 在线加载</div>'
+  h += '<div class="foot">C++ 刷题 v2.6 · 内置 ' + quiz.QUESTIONS.length + ' 题 + 在线加载</div>'
   return h
 }
 
@@ -616,6 +710,13 @@ function vPractice() {
   h += '<div class="nav-act">答题卡</div></div>'
 
   h += '<div class="pline" style="background:linear-gradient(to right, #1B1917 0%, #1B1917 ' + pct + '%, rgba(27,25,23,.07) ' + pct + '%, rgba(27,25,23,.07) 100%)"></div>'
+
+  if (cur.resumed && !isExam) {
+    h += '<div class="resume">'
+    h += '  <span class="resume-t">接着上次 · 第 ' + (cur.idx + 1) + ' / ' + cur.list.length + ' 题</span>'
+    h += '  <span class="resume-x" onclick="restartNow()">重新开始</span>'
+    h += '</div>'
+  }
 
   h += '<div class="qmeta">'
   h += '  <span class="qm-i serif">' + (cur.idx + 1) + '<span class="qm-t">/' + cur.list.length + '</span></span>'
@@ -660,10 +761,15 @@ function vPractice() {
   var last = cur.idx === cur.list.length - 1
   h += '<div class="bb">'
   h += '  <div class="bb-ico ' + (cur.idx === 0 ? 'off' : '') + '" onclick="prev()">‹</div>'
-  h += '  <div class="bb-main" onclick="next()">' + (last ? (isExam ? '交卷' : '完成') : '下一题') + '</div>'
+  h += '  <div class="bb-main" onclick="next()">' + (last ? (isExam ? '交卷' : '完成') : (a.answered ? '下一题' : '跳过')) + '</div>'
   h += '  <div class="bb-ico" onclick="toggleFav()">☆</div>'
   h += '</div>'
   return h
+}
+
+function restartNow() {
+  cur.idx = 0; cur.answers = {}; cur.resumed = false
+  render()
 }
 
 function pick(i) {
@@ -701,11 +807,7 @@ function prev() {
 }
 
 function next() {
-  if (state.page !== 'exam') {
-    var q = cur.list[cur.idx]
-    var a = cur.answers[q.id]
-    if (!a || !a.answered) { flash('请先作答'); return }
-  }
+  /* v2.6：未作答不再拦着，直接前进（跳过的题最后按错算） */
   if (cur.idx >= cur.list.length - 1) { state.page = 'result'; render(); return }
   cur.idx++; render()
 }
@@ -924,6 +1026,11 @@ function openBook(id) {
     h += '<button class="sp-btn plain" onclick="closeBook()">关闭</button>'
     h += '</div>'
   }
+  showPane(h)
+}
+
+/* 通用：往底部浮层里塞内容并滑出 */
+function showPane(h) {
   var pane = document.getElementById('spane')
   var wrap = document.getElementById('sheetwrap')
   wrap.classList.remove('on')
@@ -1152,6 +1259,26 @@ if (_isPrac) {
 } else if (_hash) {
   state.page = _hash; render()
 } else {
+  render()
+}
+
+/* 截图 / 验收用：?pick=seq、?pick=seq-algo 直接弹选题数浮层；?resume=1 让练习页显示续做条 */
+var _q = {}
+location.search.replace(/^\?/, '').split('&').forEach(function (kv) {
+  if (!kv) return
+  var a = kv.split('=')
+  _q[decodeURIComponent(a[0])] = decodeURIComponent(a[1] || '')
+})
+if (_q.pick) {
+  var _pp = _q.pick.split('-'), _pm = 'seq', _pc = ''
+  if (_pp.length > 1 && MODE_LABEL[_pp[0]]) { _pm = _pp[0]; _pc = _pp[1] || '' }
+  else if (_pp.length > 1) { _pc = _pp[0] }
+  else if (MODE_LABEL[_pp[0]]) _pm = _pp[0]
+  openPick(_pm, _pc)
+}
+if (_q.resume && (state.page === 'practice' || state.page === 'exam')) {
+  cur.idx = Math.min(6, cur.list.length - 1)
+  cur.resumed = true
   render()
 }
 </script>

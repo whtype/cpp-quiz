@@ -49,7 +49,8 @@
     <view class="tile" wx:for="{{tiles}}" wx:key="mode" data-mode="{{item.mode}}" bindtap="goPractice">
       <view class="tile-n serif">{{item.num}}</view>
       <view class="tile-l">{{item.name}}</view>
-      <view class="tile-d">{{item.desc}}</view>
+      <view class="tile-d" wx:if="{{item.resume}}"><text class="tile-rs">继续 · 第 {{item.resumeIdx}} 题</text></view>
+      <view class="tile-d" wx:else>{{item.desc}}</view>
     </view>
   </view>
 
@@ -61,7 +62,10 @@
   <view class="list">
     <view class="cat" wx:for="{{cats}}" wx:key="key" data-mode="seq" data-cat="{{item.key}}" bindtap="goPractice">
       <view class="cat-b">
-        <view class="cat-n">{{item.name}}</view>
+        <view class="cat-n">
+          <text>{{item.name}}</text>
+          <text class="cat-rs" wx:if="{{item.resume}}">继续 · 第 {{item.resumeIdx}} 题</text>
+        </view>
         <view class="cat-d">{{item.desc}}</view>
         <view class="bar"><view class="bar-in" style="width: {{item.percent}}%"></view></view>
       </view>
@@ -109,7 +113,7 @@
         <view class="rn">在线题库</view>
         <view class="rd">{{booting ? '首次启动 · 正在静默加载…' : (cloudOn ? '云函数代理已启用' : '开源题库 · 用时才加载，不占包体')}}</view>
       </view>
-      <view class="rv"><b>{{onlineNum}}</b> 题</view>
+      <view class="rv"><text class="rv-n serif">{{onlineNum}}</text><text class="rv-u">题</text></view>
       <view class="rarw">›</view>
     </view>
     <view class="row" bindtap="goImport">
@@ -129,9 +133,31 @@
   </view>
 
   <view class="foot">
-    <text>C++ 刷题 v2.0</text>
+    <text>C++ 刷题 v2.6</text>
     <text class="dot">·</text>
     <text>内置 {{baseTotal}} 题 + 在线加载</text>
+  </view>
+
+  <!-- 开始练习：选题数 / 继续上次 -->
+  <view class="mask" wx:if="{{picker.open}}" bindtap="closePicker">
+    <view class="sheet" catchtap="noop">
+      <view class="sh-handle"></view>
+
+      <view class="pk-t">{{picker.name}}</view>
+      <view class="pk-s" wx:if="{{picker.canResume}}">上次停在第 {{picker.resumeIdx}} / {{picker.resumeTotal}} 题，接着刷还是重开？</view>
+      <view class="pk-s" wx:else>这一轮刷多少题？</view>
+
+      <view class="pk-row">
+        <view class="pk-c {{picker.count === item ? 'on' : ''}}"
+              wx:for="{{countOpts}}"
+              wx:key="*this"
+              data-n="{{item}}"
+              bindtap="pickCount">{{item === 0 ? '全部' : item + ' 题'}}</view>
+      </view>
+
+      <view class="btn {{picker.canResume ? '' : 'pk-go'}}" wx:if="{{picker.canResume}}" bindtap="resumeLast">继续上次 · 第 {{picker.resumeIdx}} 题</view>
+      <view class="btn {{picker.canResume ? 'btn-ghost' : 'pk-go'}}" bindtap="startPractice">{{picker.cta}}</view>
+    </view>
   </view>
 
 </view>

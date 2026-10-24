@@ -40,7 +40,7 @@ Page({
     var session = store.getSession()
     if (!session || !session.items || !session.items.length) {
       wx.showToast({ title: '没有找到练习记录', icon: 'none' })
-      setTimeout(function () { wx.navigateBack() }, 1200)
+      setTimeout(function () { ui.back() }, 1200)
       return
     }
 

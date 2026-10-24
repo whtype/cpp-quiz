@@ -16,6 +16,28 @@
   transition: width 0.32s ease;
 }
 
+/* 接着上次的提示条：很轻，不抢题目的注意力 */
+.resume {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -40rpx;
+  padding: 14rpx 40rpx;
+  background: var(--accent-soft);
+}
+
+.resume-t {
+  font-size: 21rpx;
+  color: var(--accent);
+  letter-spacing: 0.5rpx;
+}
+
+.resume-x {
+  font-size: 21rpx;
+  color: var(--ink-3);
+  padding: 4rpx 0 4rpx 20rpx;
+}
+
 .body { padding-top: 26rpx; }
 
 /* 题头 */
@@ -253,38 +275,7 @@
 
 .bb-main:active { background: var(--accent-2); }
 
-/* 答题卡 */
-.mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(27, 25, 23, 0.34);
-  z-index: 50;
-  animation: fadeIn 0.2s ease both;
-}
-
-.sheet {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--paper);
-  border-radius: 34rpx 34rpx 0 0;
-  padding: 18rpx 40rpx calc(28rpx + env(safe-area-inset-bottom));
-  animation: sheetUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-  max-height: 76vh;
-}
-
-.sh-handle {
-  width: 68rpx;
-  height: 6rpx;
-  border-radius: 6rpx;
-  background: var(--ink-4);
-  margin: 0 auto 26rpx;
-}
-
+/* 答题卡（.mask / .sheet / .sh-handle 在 app.wxss 里，各页共用） */
 .sh-head {
   display: flex;
   align-items: baseline;
