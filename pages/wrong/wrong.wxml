@@ -1,0 +1,64 @@
+<view class="page">
+
+  <view class="nav" style="padding-top:{{statusBar}}px">
+    <view class="nav-back" bindtap="goBack">‹</view>
+    <view class="nav-title">复习</view>
+  </view>
+
+  <!-- 顶部分段：下划线式 -->
+  <view class="tabs">
+    <view class="tab {{tab === 'wrong' ? 'on' : ''}}" data-tab="wrong" bindtap="switchTab">
+      <text>错题</text><text class="tab-n serif">{{wrongNum}}</text>
+    </view>
+    <view class="tab {{tab === 'fav' ? 'on' : ''}}" data-tab="fav" bindtap="switchTab">
+      <text>收藏</text><text class="tab-n serif">{{favNum}}</text>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{list.length === 0}}">
+    <view class="e1 serif">{{tab === 'wrong' ? '0' : '☆'}}</view>
+    <view class="e2">{{tab === 'wrong' ? '错题本是空的，继续保持' : '还没有收藏题目'}}</view>
+  </view>
+
+  <block wx:if="{{list.length > 0}}">
+    <view class="sec s-first">
+      <text class="t">题 目</text>
+      <text class="s">点开看解析</text>
+    </view>
+
+    <view class="items">
+      <view class="it {{openIdx === index ? 'open' : ''}}" wx:for="{{list}}" wx:key="id" data-i="{{index}}" bindtap="toggleItem">
+        <view class="it-head">
+          <text class="it-no serif">{{index + 1}}</text>
+          <text class="it-q">{{item.q}}</text>
+        </view>
+        <view class="it-tags">
+          <text class="tag">{{item.cat}}</text>
+          <text class="tag">{{item.typeName}}</text>
+          <text class="tag tag-err" wx:if="{{item.times > 0}}">错 {{item.times}} 次</text>
+        </view>
+
+        <view class="it-body fade-up" wx:if="{{openIdx === index}}">
+          <view class="code" wx:if="{{item.code}}">{{item.code}}</view>
+          <view class="it-l">
+            <text class="k">正确答案</text>
+            <text class="v ok-c serif">{{item.ansText}}</text>
+          </view>
+          <view class="it-exp">{{item.exp}}</view>
+          <view class="it-rm" data-id="{{item.id}}" catchtap="remove">
+            {{tab === 'wrong' ? '已掌握，移出错题本' : '取消收藏'}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="pb"></view>
+
+    <view class="bb">
+      <view class="bb-ico" bindtap="clear">⌫</view>
+      <view class="bb-main" bindtap="practice">{{tab === 'wrong' ? '重练错题' : '练习收藏'}}</view>
+      <view class="bb-ico off">·</view>
+    </view>
+  </block>
+
+</view>

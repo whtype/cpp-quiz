@@ -1,0 +1,97 @@
+<view class="page pr">
+
+  <!-- 导航 -->
+  <view class="nav" style="padding-top:{{statusBar}}px">
+    <view class="nav-back" bindtap="goBack">‹</view>
+    <view class="nav-title">{{modeName}}</view>
+    <view class="nav-act" bindtap="toggleCard">答题卡</view>
+  </view>
+
+  <!-- 进度 -->
+  <view class="pline"><view class="pline-in" style="width: {{percent}}%"></view></view>
+
+  <view class="body">
+
+    <!-- 题头 -->
+    <view class="qmeta">
+      <text class="qm-i serif">{{idx + 1}}<text class="qm-t">/{{total}}</text></text>
+      <text class="qm-dot">·</text>
+      <text class="qm-t2">{{typeName}}</text>
+      <text class="qm-t2">{{levelName}}</text>
+      <text class="qm-cat" wx:if="{{catName}}">{{catName}}</text>
+      <text class="qm-timer {{isExam ? 'exam' : ''}}">{{timeText}}</text>
+    </view>
+
+    <!-- 题干 -->
+    <view class="qtext">{{cur.q}}</view>
+    <view class="code" wx:if="{{cur.code}}">{{cur.code}}</view>
+
+    <!-- 选项 -->
+    <view class="opts">
+      <view class="opt {{optCls[index]}}"
+            wx:for="{{cur.options}}"
+            wx:key="index"
+            data-i="{{index}}"
+            bindtap="tapOption">
+        <text class="ok serif">{{letters[index]}}</text>
+        <text class="ot">{{item}}</text>
+        <text class="om okmark" wx:if="{{optCls[index] === 'right'}}">✓</text>
+        <text class="om badmark" wx:if="{{optCls[index] === 'wrong'}}">✕</text>
+      </view>
+    </view>
+
+    <view class="mtip" wx:if="{{cur.type === 'multi' && !answered}}">多选题 · 可选多个，选完点「确认作答」</view>
+    <button class="btn" wx:if="{{cur.type === 'multi' && !answered}}" bindtap="doSubmit">确认作答</button>
+
+    <!-- 解析 -->
+    <view class="exp fade-up" wx:if="{{revealed}}">
+      <view class="exp-head">
+        <text class="exp-st {{isRight ? 'ok-c' : 'err-c'}}">{{isRight ? '答对了' : '答错了'}}</text>
+        <text class="exp-ans serif">{{answerText}}</text>
+      </view>
+      <view class="exp-you" wx:if="{{!isRight}}">你选的是 {{pickedText}}</view>
+      <view class="exp-line"></view>
+      <view class="exp-t">{{cur.exp}}</view>
+    </view>
+
+    <view class="pb"></view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bb">
+    <view class="bb-ico {{idx === 0 ? 'off' : ''}}" bindtap="prev">‹</view>
+    <view class="bb-main" bindtap="next">{{isLast ? (isExam ? '交卷' : '完成') : '下一题'}}</view>
+    <view class="bb-ico {{faved ? 'on' : ''}}" bindtap="toggleFav">{{faved ? '★' : '☆'}}</view>
+  </view>
+
+  <!-- 答题卡 -->
+  <view class="mask" wx:if="{{cardOpen}}" bindtap="toggleCard">
+    <view class="sheet" catchtap="noop">
+      <view class="sh-handle"></view>
+      <view class="sh-head">
+        <text class="sh-t">答题卡</text>
+        <text class="sh-s">已答 {{answeredCount}} / {{total}}</text>
+      </view>
+      <scroll-view class="sh-scroll" scroll-y>
+        <view class="sh-grid">
+          <view class="cell {{flags[index] === 1 ? 'c-ok' : (flags[index] === 2 ? 'c-err' : (flags[index] === 3 ? 'c-done' : ''))}} {{idx === index ? 'cur' : ''}}"
+                wx:for="{{list}}"
+                wx:key="id"
+                data-i="{{index}}"
+                bindtap="jumpTo">{{index + 1}}</view>
+        </view>
+      </scroll-view>
+      <view class="sh-legend">
+        <text><text class="lg c-ok"></text>正确</text>
+        <text><text class="lg c-err"></text>错误</text>
+        <text><text class="lg c-done"></text>已答</text>
+        <text><text class="lg"></text>未答</text>
+      </view>
+      <view class="sh-btns">
+        <view class="btn btn-ghost btn-sm" bindtap="toggleCard">关闭</view>
+        <view class="btn btn-sm" wx:if="{{isExam}}" bindtap="onFinishTap">立即交卷</view>
+      </view>
+    </view>
+  </view>
+
+</view>

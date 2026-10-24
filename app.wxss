@@ -1,0 +1,348 @@
+/* ==========================================================
+   C++ 刷题 · 全局样式  v2.0
+   风格：纸感浅色（接近「不背单词」的阅读器质感）
+   —— 米白纸底 / 墨黑字 / 一个暖橙强调色 / 极细线分层 / 衬线数字
+   —— 不用渐变、不用重阴影、不用彩色图标块
+   ========================================================== */
+
+page {
+  /* 底色 */
+  --paper: #f6f3ec;
+  --paper-2: #efeae0;
+  --card: #ffffff;
+
+  /* 墨色 */
+  --ink: #1b1917;
+  --ink-2: #6e695f;
+  --ink-3: #a8a296;
+  --ink-4: #c9c3b6;
+
+  /* 线 */
+  --line: rgba(27, 25, 23, 0.08);
+  --line-2: rgba(27, 25, 23, 0.05);
+
+  /* 强调色 */
+  --accent: #d9542b;
+  --accent-2: #b8431f;
+  --accent-soft: rgba(217, 84, 43, 0.09);
+  --ok: #2e7d5b;
+  --ok-soft: rgba(46, 125, 91, 0.09);
+  --err: #c1463b;
+  --err-soft: rgba(193, 70, 59, 0.09);
+
+  background: #f6f3ec;
+  color: #1b1917;
+  font-size: 28rpx;
+  line-height: 1.65;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+view, text, button, textarea, picker { box-sizing: border-box; }
+
+/* 衬线：数字、英文、大标题用它，是这个风格的关键 */
+.serif {
+  font-family: Georgia, "Times New Roman", "Songti SC", "STSong", serif;
+}
+
+/* ---------------- 页面骨架 ---------------- */
+
+.page {
+  min-height: 100vh;
+  padding: 0 40rpx calc(40rpx + env(safe-area-inset-bottom));
+  background: #f6f3ec;
+}
+
+/* 自定义导航：只放标题和返回，尽量轻 */
+.nav {
+  display: flex;
+  align-items: flex-end;
+  height: 88rpx;
+  padding-bottom: 8rpx;
+  position: relative;
+}
+
+.nav-back {
+  width: 56rpx;
+  height: 56rpx;
+  margin-left: -12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.nav-title {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-title.center { text-align: center; }
+
+.nav-act {
+  font-size: 25rpx;
+  color: var(--ink-2);
+  padding: 8rpx 0 8rpx 16rpx;
+}
+
+/* ---------------- 排版 ---------------- */
+
+/* 眉题：小、字距大、像书页上的栏目名 */
+.kicker {
+  font-size: 22rpx;
+  letter-spacing: 6rpx;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+
+.h1 {
+  font-size: 76rpx;
+  line-height: 1.12;
+  font-weight: 400;
+  letter-spacing: -1rpx;
+  color: var(--ink);
+}
+
+.h2 {
+  font-size: 40rpx;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: 0.5rpx;
+  color: var(--ink);
+}
+
+.dim { color: var(--ink-3); }
+.dim2 { color: var(--ink-2); }
+.ok-c { color: var(--ok); }
+.err-c { color: var(--err); }
+
+/* 章节标题：不加卡片，只加留白 */
+.sec {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 56rpx 0 20rpx;
+  padding: 0 4rpx;
+}
+
+.sec .t {
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 3rpx;
+  color: var(--ink-2);
+}
+
+.sec .s {
+  font-size: 23rpx;
+  color: var(--ink-3);
+}
+
+/* ---------------- 卡片 ---------------- */
+
+.card {
+  background: var(--card);
+  border-radius: 30rpx;
+  padding: 36rpx;
+  box-shadow: 0 1rpx 2rpx rgba(27, 25, 23, 0.03), 0 12rpx 32rpx -20rpx rgba(27, 25, 23, 0.16);
+}
+
+/* 纸卡片：极细边框，无阴影，像书页 */
+.card-paper {
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: 24rpx;
+  padding: 32rpx;
+}
+
+/* ---------------- 按钮 ---------------- */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96rpx;
+  border-radius: 999rpx;
+  font-size: 31rpx;
+  font-weight: 600;
+  letter-spacing: 3rpx;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  box-shadow: 0 10rpx 24rpx -10rpx rgba(217, 84, 43, 0.55);
+}
+
+.btn::after { border: none; }
+.btn:active { background: var(--accent-2); transform: scale(0.99); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1rpx solid var(--line);
+  box-shadow: none;
+  font-weight: 500;
+}
+
+.btn-ghost:active { background: rgba(27, 25, 23, 0.03); }
+
+.btn-plain {
+  background: var(--paper-2);
+  color: var(--ink);
+  box-shadow: none;
+  font-weight: 500;
+}
+
+.btn-plain:active { background: #e6e0d4; }
+
+.btn-sm { height: 76rpx; font-size: 27rpx; letter-spacing: 2rpx; }
+
+.link {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--ink-3);
+  padding: 28rpx 0 8rpx;
+}
+
+/* ---------------- 标签 ---------------- */
+
+.tag {
+  display: inline-block;
+  padding: 4rpx 14rpx;
+  border-radius: 6rpx;
+  font-size: 21rpx;
+  line-height: 32rpx;
+  letter-spacing: 1rpx;
+  color: var(--ink-3);
+  background: rgba(27, 25, 23, 0.045);
+}
+
+.tag-accent { color: var(--accent); background: var(--accent-soft); }
+.tag-ok { color: var(--ok); background: var(--ok-soft); }
+.tag-err { color: var(--err); background: var(--err-soft); }
+
+/* ---------------- 进度 ---------------- */
+
+.bar {
+  height: 4rpx;
+  border-radius: 4rpx;
+  background: rgba(27, 25, 23, 0.08);
+  overflow: hidden;
+}
+
+.bar > .bar-in {
+  display: block;
+  height: 100%;
+  background: var(--ink-4);
+  border-radius: 4rpx;
+  transition: width 0.4s ease;
+}
+
+.bar.accent > i { background: var(--accent); }
+
+/* ---------------- 列表行 ---------------- */
+
+.list {
+  background: var(--card);
+  border-radius: 28rpx;
+  overflow: hidden;
+  box-shadow: 0 1rpx 2rpx rgba(27, 25, 23, 0.03), 0 12rpx 32rpx -24rpx rgba(27, 25, 23, 0.18);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 32rpx;
+  position: relative;
+}
+
+.row + .row::before {
+  content: '';
+  position: absolute;
+  left: 32rpx;
+  right: 32rpx;
+  top: 0;
+  height: 1rpx;
+  background: var(--line-2);
+}
+
+.row:active { background: rgba(27, 25, 23, 0.025); }
+
+.row .rt { flex: 1; min-width: 0; }
+.row .rn { font-size: 30rpx; font-weight: 500; color: var(--ink); }
+.row .rd { font-size: 23rpx; color: var(--ink-3); margin-top: 4rpx; }
+.row .rv {
+  font-size: 30rpx;
+  color: var(--ink-3);
+  margin-left: 16rpx;
+  font-family: Georgia, serif;
+}
+.row .rv b { color: var(--ink); font-weight: 400; }
+.row .rarw { font-size: 30rpx; color: var(--ink-4); margin-left: 12rpx; }
+
+/* ---------------- 代码 ---------------- */
+
+.code {
+  background: #f3efe6;
+  border-left: 3rpx solid var(--ink-4);
+  border-radius: 4rpx;
+  padding: 22rpx 24rpx;
+  font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+  font-size: 23rpx;
+  line-height: 1.75;
+  color: #3a3730;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ---------------- 空状态 ---------------- */
+
+.empty {
+  text-align: center;
+  padding: 180rpx 40rpx;
+}
+
+.empty .e1 {
+  font-family: Georgia, serif;
+  font-size: 84rpx;
+  color: var(--ink-4);
+  line-height: 1;
+}
+
+.empty .e2 {
+  margin-top: 24rpx;
+  font-size: 26rpx;
+  color: var(--ink-3);
+}
+
+/* ---------------- 动效 ---------------- */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.fade-up { animation: fadeUp 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.fade-in { animation: fadeIn 0.3s ease both; }
+
+/* 依次入场 */
+.d1 { animation-delay: 0.04s; }
+.d2 { animation-delay: 0.08s; }
+.d3 { animation-delay: 0.12s; }
+.d4 { animation-delay: 0.16s; }

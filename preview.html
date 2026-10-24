@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ 刷题 · 界面预览 v2.2</title>
+<style>
+  :root{
+    --paper:#F6F3EC; --paper2:#EFEAE0; --card:#fff;
+    --ink:#1B1917; --ink2:#6E695F; --ink3:#A8A296; --ink4:#C9C3B6;
+    --line:rgba(27,25,23,.08); --line2:rgba(27,25,23,.05);
+    --accent:#D9542B; --accent2:#B8431F; --accsoft:rgba(217,84,43,.09);
+    --ok:#2E7D5B; --oksoft:rgba(46,125,91,.09);
+    --err:#C1463B; --errsoft:rgba(193,70,59,.09);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{
+    background:#E8E3D8;
+    background-image:radial-gradient(circle at 20% 0%, #F2EEE4 0%, #E4DED1 60%, #DCD5C6 100%);
+    font:14px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--ink);
+    min-height:100vh;display:flex;align-items:flex-start;justify-content:center;
+    gap:64px;padding:44px 32px;flex-wrap:wrap;
+  }
+  .serif{font-family:Georgia,"Times New Roman","Songti SC",serif}
+
+  /* ---------- 手机外框 ---------- */
+  .phone{
+    width:390px;height:844px;background:var(--paper);border-radius:46px;
+    box-shadow:0 2px 4px rgba(60,50,30,.08), 0 40px 90px -30px rgba(60,50,30,.45), 0 0 0 9px #1d1b19, 0 0 0 10px #3a3733;
+    overflow:hidden;position:relative;display:flex;flex-direction:column;flex-shrink:0;
+  }
+  .sbar{height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+    padding:0 26px;font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.3px}
+  .sbar .r{display:flex;gap:5px;align-items:center;font-size:11px;letter-spacing:0}
+
+  .screen{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 20px 20px;position:relative;background:var(--paper)}
+  .screen::-webkit-scrollbar{width:0}
+
+  /* ---------- 基础组件 ---------- */
+  .nav{display:flex;align-items:center;height:44px;position:relative}
+  .nav-title{flex:1;font-size:15px;font-weight:600;letter-spacing:.5px}
+  .nav-act{font-size:12.5px;color:var(--ink2);padding:4px 0 4px 8px}
+  .nav-back{width:28px;height:28px;margin-left:-6px;display:flex;align-items:center;justify-content:center;font-size:19px;cursor:pointer}
+
+  .kicker{font-size:11px;letter-spacing:3px;color:var(--ink3);text-transform:uppercase}
+  .kicker.acc{color:var(--accent)}
+  .h1{font-size:38px;line-height:1.12;letter-spacing:-.5px;margin:8px 0 0}
+  .h1.serif{font-weight:400}
+
+  .sec{display:flex;align-items:baseline;justify-content:space-between;margin:28px 0 10px}
+  .sec .t{font-size:13px;font-weight:600;letter-spacing:1.5px;color:var(--ink2)}
+  .sec .s{font-size:11.5px;color:var(--ink3)}
+
+  .list{background:#fff;border-radius:14px;overflow:hidden;
+    box-shadow:0 1px 2px rgba(27,25,23,.03), 0 12px 30px -22px rgba(27,25,23,.35)}
+  .row{display:flex;align-items:center;padding:15px 16px;position:relative;cursor:pointer}
+  .row+.row:before{content:'';position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--line2)}
+  .row:active{background:rgba(27,25,23,.02)}
+  .rt{flex:1;min-width:0}
+  .rn{font-size:15px;font-weight:500}
+  .rd{font-size:11.5px;color:var(--ink3);margin-top:2px}
+  .rv{font-size:15px;color:var(--ink3);margin-left:8px;font-family:Georgia,serif}
+  .rv b{color:var(--ink);font-weight:400}
+  .rarw{font-size:15px;color:var(--ink4);margin-left:6px}
+
+  .bar{height:2px;border-radius:2px;background:rgba(27,25,23,.06);overflow:hidden}
+  .bar>i{display:block;height:100%;background:var(--ink4);border-radius:2px;transition:width .45s ease}
+
+  .btn{display:flex;align-items:center;justify-content:center;height:48px;border-radius:999px;border:none;
+    background:var(--accent);color:#fff;font-size:15.5px;font-weight:600;letter-spacing:1.5px;
+    box-shadow:0 8px 20px -10px rgba(217,84,43,.65);cursor:pointer;width:100%;font-family:inherit}
+  .btn:active{background:var(--accent2);transform:scale(.99)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none;font-weight:500}
+  .btn.plain{background:var(--paper2);color:var(--ink);box-shadow:none;font-weight:500}
+  .link{text-align:center;font-size:13px;color:var(--ink3);padding:14px 0 4px;cursor:pointer}
+
+  .tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10.5px;letter-spacing:.5px;
+    color:var(--ink3);background:rgba(27,25,23,.045);margin-right:5px}
+  .tag.err{color:var(--err);background:var(--errsoft)}
+
+  .code{background:#F3EFE6;border-left:2px solid var(--ink4);border-radius:2px;padding:11px 12px;
+    font:11.5px/1.75 "SFMono-Regular",Consolas,monospace;color:#3A3730;white-space:pre-wrap;
+    word-break:break-word;margin-top:12px}
+
+  .foot{text-align:center;padding:28px 0 12px;font-size:10px;letter-spacing:.5px;color:var(--ink4)}
+
+  /* ---------- 首页 ---------- */
+  .strip{display:flex;align-items:flex-end;padding:10px 0 6px}
+  .strip .st{flex:1;text-align:center;cursor:pointer}
+  .strip .st:first-child{text-align:left}
+  .strip .st:last-child{text-align:right}
+  .st-n{font-size:34px;line-height:1;letter-spacing:-.5px}
+  .st-u{font-size:14px;color:var(--ink3);margin-left:1px}
+  .st-l{margin-top:5px;font-size:11px;letter-spacing:1px;color:var(--ink3)}
+  .stline{width:1px;height:28px;background:var(--line);margin-bottom:7px}
+
+  .hero{position:relative;margin-top:14px;background:#fff;border-radius:16px;padding:20px 22px 16px 24px;
+    overflow:hidden;cursor:pointer;
+    box-shadow:0 2px 3px rgba(27,25,23,.03), 0 22px 40px -30px rgba(27,25,23,.4)}
+  .hero:active{transform:scale(.994)}
+  .spine{position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--accent);opacity:.9}
+  .hero-t{font-size:31px;line-height:1.1;letter-spacing:1px;margin-top:7px}
+  .hero-d{margin-top:6px;font-size:12px;color:var(--ink3)}
+  .hero-cta{position:absolute;right:18px;top:42px;width:44px;height:44px;border-radius:50%;
+    background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;
+    box-shadow:0 8px 18px -8px rgba(217,84,43,.7)}
+  .hero-bar{margin-top:18px;height:2px;background:rgba(27,25,23,.07);border-radius:2px;overflow:hidden}
+  .hero-bar>i{display:block;height:100%;background:var(--accent);border-radius:2px}
+  .hero-foot{display:flex;justify-content:space-between;margin-top:7px;font-size:10.5px;color:var(--ink4);letter-spacing:.5px}
+
+  .grid{display:flex;flex-wrap:wrap;margin:0 -3.5px}
+  .tile{width:calc(50% - 7px);margin:0 3.5px 7px;background:#fff;border:1px solid var(--line);
+    border-radius:13px;padding:15px 15px 14px;cursor:pointer}
+  .tile:active{background:rgba(27,25,23,.02)}
+  .tile-n{font-size:28px;line-height:1;letter-spacing:-.5px}
+  .tile-l{margin-top:8px;font-size:13.5px;font-weight:500}
+  .tile-d{margin-top:2px;font-size:10.5px;color:var(--ink3)}
+
+  .cat{display:flex;align-items:center;padding:15px 16px;position:relative;cursor:pointer}
+  .cat+.cat:before{content:'';position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--line2)}
+  .cat:active{background:rgba(27,25,23,.02)}
+  .cat-b{flex:1;min-width:0;padding-right:12px}
+  .cat-n{font-size:14.5px;font-weight:500}
+  .cat-d{margin:3px 0 15px;font-size:10.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cat-v{font-size:13px;color:var(--ink4);letter-spacing:.3px}
+  .cat-v .cur{color:var(--ink)}
+
+  .rrow{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;position:relative}
+  .rrow+.rrow:before{content:'';position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--line2)}
+  .rr-n{font-size:13.5px}
+  .rr-t{font-size:10.5px;color:var(--ink4);margin-left:7px}
+  .rr-a{font-size:16px}
+
+  /* ---------- 答题页 ---------- */
+  .pline{height:2px;margin:0 -20px}
+  .qmeta{display:flex;align-items:baseline;padding-top:13px;background:transparent}
+  .qm-i{font-size:17px;letter-spacing:.3px}
+  .qm-t{font-size:12px;color:var(--ink4)}
+  .qm-dot{margin:0 7px;color:var(--ink4);font-size:11px}
+  .qm-t2{font-size:11px;color:var(--ink3);margin-right:7px;letter-spacing:.5px}
+  .qm-cat{font-size:10px;color:var(--ink3);letter-spacing:.5px;border:1px solid var(--line2);border-radius:2px;
+    padding:1px 5px 2px;margin-right:6px;transform:translateY(-1px)}
+  .qm-timer{margin-left:auto;font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+  .qm-timer.exam{color:var(--accent)}
+  .qtext{margin-top:17px;font-size:20px;line-height:1.72;font-weight:500;letter-spacing:.2px;word-break:break-word}
+  .opts{margin-top:22px}
+  .opt{display:flex;align-items:flex-start;padding:15px 15px 15px 13px;margin-bottom:8px;background:#fff;
+    border:1px solid var(--line);border-radius:11px;cursor:pointer;transition:background .16s,border-color .16s}
+  .opt:active{background:rgba(27,25,23,.02)}
+  .ok-l{width:23px;flex-shrink:0;font-size:14px;line-height:1.5;color:var(--ink3);font-family:Georgia,serif}
+  .ot{flex:1;font-size:15px;line-height:1.6;word-break:break-word}
+  .om{width:20px;flex-shrink:0;text-align:right;font-size:13px;line-height:1.6}
+  .opt.picked{border-color:var(--accent);background:var(--accsoft)}
+  .opt.picked .ok-l{color:var(--accent)}
+  .opt.right{border-color:rgba(46,125,91,.4);background:var(--oksoft)}
+  .opt.right .ok-l{color:var(--ok)}
+  .opt.wrong{border-color:rgba(193,70,59,.38);background:var(--errsoft)}
+  .opt.wrong .ok-l{color:var(--err)}
+  .opt.dim{opacity:.4}
+  .mtip{margin:5px 2px 11px;font-size:11px;color:var(--ink3)}
+
+  .exp{margin-top:20px;background:#fff;border-radius:13px;padding:17px 16px;
+    box-shadow:0 2px 3px rgba(27,25,23,.03), 0 18px 34px -28px rgba(27,25,23,.4);
+    animation:fu .32s cubic-bezier(.22,1,.36,1) both}
+  @keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .exp-head{display:flex;align-items:baseline;justify-content:space-between}
+  .exp-st{font-size:17px;font-weight:600;letter-spacing:.5px}
+  .exp-ans{font-size:15px;color:var(--ink2);letter-spacing:1px}
+  .exp-you{margin-top:4px;font-size:11.5px;color:var(--ink3)}
+  .exp-line{height:1px;background:var(--line2);margin:13px 0 11px}
+  .exp-t{font-size:13.5px;line-height:1.85;color:var(--ink2);word-break:break-word}
+
+  .bb{position:sticky;bottom:0;left:0;right:0;display:flex;align-items:center;gap:8px;
+    margin:0 -20px;padding:9px 20px 14px;background:linear-gradient(180deg,rgba(246,243,236,0) 0%,#F6F3EC 30%);z-index:9}
+  .bb-ico{width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--ink2);flex-shrink:0;cursor:pointer}
+  .bb-ico.off{opacity:.35}
+  .bb-ico.on{color:var(--accent);border-color:rgba(217,84,43,.35)}
+  .bb-main{flex:1;height:46px;border-radius:999px;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:15.5px;font-weight:600;letter-spacing:2px;
+    box-shadow:0 8px 20px -10px rgba(217,84,43,.65);cursor:pointer}
+  .bb-main:active{background:var(--accent2)}
+  .pad-b{height:76px}
+
+  /* ---------- 题库页 ---------- */
+  .head{padding:12px 2px 0}
+  .head-d{margin-top:9px;font-size:12px;line-height:1.7;color:var(--ink3);max-width:290px}
+  .sum{display:flex;align-items:center;margin-top:18px;background:#fff;border-radius:14px;padding:17px 0;
+    box-shadow:0 2px 3px rgba(27,25,23,.03), 0 18px 34px -28px rgba(27,25,23,.4)}
+  .sum-i{flex:1;text-align:center}
+  .sum-n{font-size:26px;line-height:1}
+  .sum-n.acc{color:var(--accent)}
+  .sum-l{margin-top:5px;font-size:10.5px;letter-spacing:1px;color:var(--ink3)}
+  .sumline{width:1px;height:28px;background:var(--line)}
+  .src{padding:14px 16px;position:relative}
+  .src+.src:before{content:'';position:absolute;left:16px;right:16px;top:0;height:1px;background:var(--line2)}
+  .src-top{display:flex;align-items:flex-start}
+  .src-b{flex:1;min-width:0;padding-right:10px}
+  .src-n{display:flex;align-items:center;font-size:14.5px;font-weight:500}
+  .src-tag{margin-left:6px;padding:1px 5px;font-size:9.5px;letter-spacing:.5px;color:var(--ink3);
+    background:rgba(27,25,23,.05);border-radius:2px}
+  .src-d{margin-top:3px;font-size:10.5px;color:var(--ink3)}
+  .src-foot{display:flex;align-items:center;justify-content:space-between;margin-top:7px}
+  .src-st{font-size:10.5px;color:var(--ink4)}
+  .src-op{font-size:10.5px;color:var(--accent);cursor:pointer;padding:2px 0 2px 8px}
+  .tg{width:39px;height:22px;border-radius:999px;background:rgba(27,25,23,.13);position:relative;
+    flex-shrink:0;margin-top:3px;transition:background .2s;cursor:pointer}
+  .tg-k{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;
+    box-shadow:0 1px 3px rgba(27,25,23,.25);transition:left .2s}
+  .tg.on{background:var(--accent)}
+  .tg.on .tg-k{left:19px}
+  .log{margin-top:12px;text-align:center;font-size:11.5px;letter-spacing:.5px;color:var(--ink3)}
+  .log.ok{color:var(--ok)} .log.err{color:var(--err)}
+  .note{margin-top:24px;padding:0 2px 20px;font-size:10.5px;line-height:1.8;color:var(--ink4)}
+
+  /* ---------- 结果 ---------- */
+  .rs{padding:20px 2px 0}
+  .rs-n{display:flex;align-items:flex-end}
+  .rs-n .serif{font-size:86px;line-height:.94;letter-spacing:-3px}
+  .rs-u{font-size:15px;color:var(--ink3);margin:0 0 8px 6px}
+  .rs-c{margin-top:9px;font-size:13.5px;color:var(--ink2)}
+  .rs-row{display:flex;align-items:center;margin-top:22px;padding:15px 0;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .rs-i{flex:1;text-align:center}
+  .rs-i .serif{font-size:17px}
+  .rs-l{display:block;margin-top:3px;font-size:10px;letter-spacing:1px;color:var(--ink3)}
+  .rsline{width:1px;height:22px;background:var(--line)}
+
+  .items{background:#fff;border-radius:14px;overflow:hidden;
+    box-shadow:0 2px 3px rgba(27,25,23,.03), 0 18px 34px -28px rgba(27,25,23,.4)}
+  .it{padding:14px 15px;position:relative;cursor:pointer}
+  .it+.it:before{content:'';position:absolute;left:15px;right:15px;top:0;height:1px;background:var(--line2)}
+  .it-head{display:flex;align-items:baseline}
+  .it-no{width:26px;flex-shrink:0;font-size:14px;font-family:Georgia,serif}
+  .it-q{flex:1;font-size:13.5px;line-height:1.6;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .it.open .it-q{-webkit-line-clamp:20}
+  .it-mark{width:20px;flex-shrink:0;text-align:right;font-size:12px}
+  .it-body{padding:5px 0 3px 26px;animation:fu .3s both}
+  .it-l{display:flex;align-items:baseline;margin-top:7px}
+  .it-l .k{width:70px;flex-shrink:0;font-size:11.5px;color:var(--ink3)}
+  .it-l .v{font-size:13.5px;letter-spacing:.5px}
+  .it-exp{margin-top:9px;font-size:12.5px;line-height:1.85;color:var(--ink2)}
+  .it-rm{margin-top:13px;display:inline-block;padding:6px 13px;border:1px solid var(--line);
+    border-radius:999px;font-size:11.5px;color:var(--ink2)}
+  .btns{display:flex;gap:8px;margin-top:22px}
+  .btns .btn{flex:1}
+  .pb{height:20px}
+
+  /* 导入 */
+  .ta-card{margin-top:18px;background:#fff;border:1px dashed rgba(27,25,23,.16);border-radius:13px;padding:13px 14px 9px}
+  .ta{width:100%;height:190px;border:none;outline:none;resize:none;font:13.5px/1.75 inherit;color:var(--ink);background:transparent}
+  .ta::placeholder{color:var(--ink4);font-size:12.5px;line-height:1.8}
+  .ta-foot{display:flex;justify-content:flex-end;padding-top:7px;border-top:1px solid var(--line2)}
+  .ta-op{font-size:11.5px;color:var(--accent);padding:3px 0 3px 14px;cursor:pointer}
+  .ta-op.dim{color:var(--ink3)}
+  .pick{display:flex;align-items:center;justify-content:space-between;padding:14px 3px}
+  .pick-k{font-size:13px;color:var(--ink2)}
+  .pick-v{font-size:13.5px}
+  .pick-arw{font-size:10px;color:var(--ink3)}
+  .fmt{background:#fff;border-radius:13px;border:1px solid var(--line);overflow:hidden}
+  .f{display:flex;align-items:baseline;padding:12px 14px;position:relative}
+  .f+.f:before{content:'';position:absolute;left:14px;right:14px;top:0;height:1px;background:var(--line2)}
+  .f-k{width:50px;flex-shrink:0;font-size:11.5px;color:var(--ink3);letter-spacing:.5px}
+  .f-v{flex:1;font-size:12px;line-height:1.65;color:var(--ink2)}
+
+  .empty{text-align:center;padding:90px 20px}
+  .empty .e1{font-size:42px;color:var(--ink4);line-height:1;font-family:Georgia,serif}
+  .empty .e2{margin-top:12px;font-size:13px;color:var(--ink3)}
+
+  .tabs{display:flex;margin-top:8px;border-bottom:1px solid var(--line)}
+  .tab{display:flex;align-items:baseline;padding:10px 0 11px;margin-right:26px;font-size:14.5px;
+    color:var(--ink3);position:relative;cursor:pointer}
+  .tab-n{margin-left:5px;font-size:12px;color:var(--ink4);font-family:Georgia,serif}
+  .tab.on{color:var(--ink);font-weight:600}
+  .tab.on .tab-n{color:var(--accent)}
+  .tab.on:after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink);border-radius:2px}
+
+
+  /* ---------- 书架 ---------- */
+  .shelf{margin-top:4px}
+  .bk{display:flex;background:#fff;border-radius:4px 12px 12px 4px;margin-bottom:9px;overflow:hidden;
+    box-shadow:0 1px 2px rgba(27,25,23,.04), 0 16px 30px -26px rgba(27,25,23,.5);
+    cursor:pointer;transition:transform .14s,box-shadow .14s}
+  .bk:hover{box-shadow:0 1px 2px rgba(27,25,23,.05), 0 18px 34px -24px rgba(27,25,23,.55)}
+  .bk:active{transform:scale(.985)}
+  .bk-spine{width:4px;flex-shrink:0;background:var(--ink4);opacity:.55}
+  .bk.free .bk-spine{background:var(--accent);opacity:.9}
+  .bk-body{flex:1;min-width:0;padding:15px 15px 13px 14px}
+  .bk-t{font-family:Georgia,"Songti SC",serif;font-size:18px;line-height:1.3;letter-spacing:.2px}
+  .bk-en{margin-top:3px;font-size:10px;line-height:1.5;color:var(--ink4);font-style:italic}
+  .bk-meta{margin-top:6px;font-size:10px;color:var(--ink3)}
+  .bk-meta .dot{margin:0 4px}
+  .bk-desc{margin-top:8px;font-size:12.5px;line-height:1.75;color:var(--ink2)}
+  .bk-why{margin-top:9px;padding:9px 10px;background:var(--paper);border-radius:5px}
+  .why-k{display:block;font-size:9px;letter-spacing:1.5px;color:var(--ink4)}
+  .why-v{display:block;margin-top:3px;font-size:11.5px;line-height:1.7;color:var(--ink2)}
+  .bk-foot{display:flex;align-items:center;justify-content:space-between;margin-top:11px;
+    padding-top:9px;border-top:1px solid var(--line2)}
+  .lic{flex:1;font-size:9.5px;line-height:1.5;color:var(--ink4);padding-right:8px}
+  .act{flex-shrink:0;font-size:11.5px;color:var(--accent);letter-spacing:.5px}
+  .act.gray{color:var(--ink3)}
+  .hint{margin-top:16px;padding:12px 13px;background:#fff;border:1px solid var(--line);
+    border-left:3px solid var(--accent);border-radius:4px}
+  .hint-t{font-size:11.5px;line-height:1.8;color:var(--ink2)}
+
+  /* ---------- 图书详情浮层 ---------- */
+  .sheetwrap{position:absolute;top:0;left:0;right:0;bottom:0;z-index:40;pointer-events:none;
+    display:flex;align-items:flex-end;border-radius:46px;overflow:hidden}
+  .sheetwrap.on{pointer-events:auto}
+  .smask{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(27,25,23,.34);opacity:0;transition:opacity .22s}
+  .sheetwrap.on .smask{opacity:1}
+  .spane{position:relative;width:100%;background:#fff;border-radius:20px 20px 0 0;padding:12px 22px 40px;
+    transform:translateY(101%);transition:transform .28s cubic-bezier(.2,.85,.2,1);
+    box-shadow:0 -12px 34px -20px rgba(27,25,23,.55);max-height:82%;overflow-y:auto}
+  .sheetwrap.on .spane{transform:translateY(0)}
+  .spane::-webkit-scrollbar{width:0}
+  .sp-handle{width:36px;height:3px;border-radius:2px;background:var(--ink4);opacity:.5;margin:0 auto 14px}
+  .sp-kick{font-size:9.5px;letter-spacing:2px;color:var(--ink4)}
+  .sp-t{font-family:Georgia,"Songti SC",serif;font-size:24px;line-height:1.35;margin-top:5px;letter-spacing:.2px}
+  .sp-en{font-size:11px;color:var(--ink4);font-style:italic;margin-top:4px;line-height:1.5}
+  .sp-meta{font-size:11.5px;color:var(--ink3);margin-top:9px;line-height:1.7}
+  .sp-line{height:1px;background:var(--line2);margin:15px 0 13px}
+  .sp-d{font-size:13px;line-height:1.8;color:var(--ink2)}
+  .sp-why{margin-top:12px;padding:11px 12px;background:var(--paper);border-radius:6px}
+  .sp-why .k{display:block;font-size:9px;letter-spacing:1.5px;color:var(--ink4)}
+  .sp-why .v{display:block;margin-top:4px;font-size:12px;line-height:1.75;color:var(--ink2)}
+  .sp-lic{font-size:10px;line-height:1.6;color:var(--ink4);margin-top:12px}
+  .sp-btns{display:flex;gap:9px;margin-top:17px}
+  .sp-btn{flex:1;height:46px;border-radius:23px;display:flex;align-items:center;justify-content:center;
+    font-size:14px;letter-spacing:.5px;text-decoration:none;cursor:pointer;border:none;
+    font-family:inherit;background:var(--accent);color:#fff;transition:opacity .16s}
+  .sp-btn:hover{opacity:.9}
+  .sp-btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .sp-btn.ghost:hover{background:rgba(27,25,23,.025)}
+  .sp-btn.plain{flex:0 0 76px;background:transparent;color:var(--ink3);font-size:12.5px}
+  .sp-url{word-break:break-all;font-size:10.5px;line-height:1.6;color:var(--ink4);margin-top:10px}
+
+  /* ---------- 右侧说明 ---------- */
+  .side{width:300px;padding-top:16px;color:#3B362C}
+  .side h1{font-size:26px;line-height:1.3;margin:0 0 6px;font-weight:600;letter-spacing:-.3px}
+  .side .sub{font-size:12.5px;color:#7A7365;margin-bottom:26px}
+  .side h2{font-size:11px;letter-spacing:2px;color:#9A9283;font-weight:600;margin:24px 0 10px;text-transform:uppercase}
+  .side ul{margin:0;padding-left:16px;font-size:13px;line-height:1.9;color:#4A4438}
+  .side li{margin-bottom:4px}
+  .side b{color:#1B1917}
+  .sw{display:flex;gap:8px;align-items:center;margin-bottom:9px;font-size:13px}
+  .dotc{width:14px;height:14px;border-radius:4px;flex-shrink:0;border:1px solid rgba(27,25,23,.1)}
+  .btnline{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .sbtn{padding:7px 14px;border-radius:999px;background:#fff;border:1px solid rgba(27,25,23,.1);
+    font-size:12.5px;cursor:pointer;color:#1B1917}
+  .sbtn:hover{border-color:#D9542B;color:#D9542B}
+  @media(max-width:900px){.side{display:none}}
+  /* 截图/静帧模式：加 ?still=1 关掉所有过渡，方便无头浏览器抓最终态 */
+  .still *, .still *::before, .still *::after{transition:none!important;animation:none!important}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="sbar"><span>9:41</span><span class="r">▮▮▮ ⌁ ▰</span></div>
+  <div class="screen" id="screen"></div>
+  <div class="sheetwrap" id="sheetwrap">
+    <div class="smask" onclick="closeBook()"></div>
+    <div class="spane" id="spane"></div>
+  </div>
+</div>
+
+<div class="side">
+  <h1>C++ 刷题 · v2.2</h1>
+  <div class="sub">600 题 · 纸感浅色 · 墨黑字 · 单暖橙｜可直接点按交互</div>
+
+  <h2>这一版改了什么</h2>
+  <ul>
+    <li><b>练习页标题不再一律「顺序练习」</b>：从分类进来显示「算法 · 顺序练习」，考试 / 错题 / 收藏各显示自己的名字，题头再补一枚分类小标签</li>
+    <li><b>题库扩到 600 题</b>：语法 / 算法 / 面试各 200，每题都带「为什么」式解析</li>
+    <li><b>题库不打包开源题</b>：开源题运行时在线拉取，包体里只有这 600 道中文题</li>
+    <li><b>新增题库页</b>：每个来源可单独开关、单独刷新，看得见缓存了多少题</li>
+    <li><b>新增书架</b>：6 本免费可读（含中文开源书）+ 6 本经典书目</li>
+    <li><b>界面全换</b>：深色渐变 → 米白纸底 + 衬线数字 + 一个暖橙</li>
+  </ul>
+
+  <h2>配色</h2>
+  <div class="sw"><span class="dotc" style="background:#F6F3EC"></span>#F6F3EC 纸底</div>
+  <div class="sw"><span class="dotc" style="background:#fff"></span>#FFFFFF 卡片</div>
+  <div class="sw"><span class="dotc" style="background:#1B1917"></span>#1B1917 墨黑</div>
+  <div class="sw"><span class="dotc" style="background:#D9542B"></span>#D9542B 暖橙（唯一强调）</div>
+  <div class="sw"><span class="dotc" style="background:#2E7D5B"></span>#2E7D5B 正确</div>
+  <div class="sw"><span class="dotc" style="background:#C1463B"></span>#C1463B 错误</div>
+
+  <h2>跳转</h2>
+  <div class="btnline">
+    <div class="sbtn" onclick="go('home')">首页</div>
+    <div class="sbtn" onclick="go('practice')">答题</div>
+    <div class="sbtn" onclick="go('bank')">题库</div>
+    <div class="sbtn" onclick="go('result')">结果</div>
+    <div class="sbtn" onclick="go('wrong')">错题本</div>
+    <div class="sbtn" onclick="go('import')">导入</div>
+    <div class="sbtn" onclick="go('books')">书架</div>
+  </div>
+
+  <h2>验收标题（同一页不同入口）</h2>
+  <div class="btnline">
+    <div class="sbtn" onclick="startPractice('seq')">顺序练习</div>
+    <div class="sbtn" onclick="startPractice('seq','syntax')">语法 · 顺序</div>
+    <div class="sbtn" onclick="startPractice('seq','algo')">算法 · 顺序</div>
+    <div class="sbtn" onclick="startPractice('random','interview')">面试 · 随机</div>
+    <div class="sbtn" onclick="startPractice('exam')">模拟考试</div>
+    <div class="sbtn" onclick="startPractice('wrong')">错题重练</div>
+    <div class="sbtn" onclick="startPractice('fav')">收藏练习</div>
+  </div>
+</div>
+
+<script>
+  if (location.search.indexOf('still') >= 0) document.documentElement.className += ' still'
+</script>
+<script>var module = { exports: {} }</script>
+<script src="utils/adapter.js"></script>
+<script>var CppAdapter = module.exports; module = { exports: {} }</script>
+<script src="data/bank/p1.js"></script>
+<script src="data/bank/p2.js"></script>
+<script src="data/bank/p3.js"></script>
+<script src="data/bank/p4.js"></script>
+<script src="data/bank/p5.js"></script>
+<script src="data/bank/p6.js"></script>
+<script>var BANK_ALL = [].concat(P1, P2, P3, P4, P5, P6)</script>
+<script src="data/questions.js"></script>
+<script src="data/books.js"></script>
+<script>
+var quiz = window.CppQuizData || module.exports
+var adapter = CppAdapter
+var LETTERS = ['A','B','C','D','E','F','G','H']
+var TYPE_NAME = { single:'单选题', multi:'多选题', judge:'判断题' }
+var LEVEL_NAME = { 1:'入门', 2:'进阶', 3:'拔高' }
+var CAT_NAME = {}
+quiz.CATEGORIES.forEach(function (c) { CAT_NAME[c.key] = c.name })
+
+/* -------- 假数据：模拟本地已有学习记录 + 已在线加载的题 -------- */
+var ONLINE = 52
+var MOCK_WRONG = [3, 17, 42, 88, 121, 156, 201, 233, 260, 288, 291, 297]
+var MOCK_FAV = [5, 64, 130]
+var MOCK_ANS = 128
+var MOCK_ACC = 83
+
+var state = { page: 'home', mode: 'seq', cat: '', tab: 'wrong', openIdx: -1, log: '', logTone: 'dim', loading: false, srcOn: {} }
+
+var MODE_LABEL = { seq: '顺序练习', random: '随机 20 题', exam: '模拟考试', wrong: '错题重练', fav: '收藏练习' }
+var CAT_SHORT = { syntax: '语法', algo: '算法', interview: '面试', modern: '新特性' }
+
+/* 标题：从分类进来要能看出在练哪一类，否则每个入口都写「顺序练习」会误导 */
+function titleOf() {
+  var t = MODE_LABEL[state.mode] || '练习'
+  if (state.cat && state.mode !== 'exam') t = (CAT_SHORT[state.cat] || '') + ' · ' + t
+  return t
+}
+
+/* -------- 答题状态 -------- */
+var cur = { list: [], idx: 0, answers: {} }
+
+function shuffle(a) {
+  a = a.slice()
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t
+  }
+  return a
+}
+
+function startPractice(mode, cat) {
+  cat = cat || ''
+  state.mode = mode
+  state.cat = cat
+  var pool = cat ? quiz.QUESTIONS.filter(function (q) { return q.cat === cat }) : quiz.QUESTIONS
+  if (!pool.length) pool = quiz.QUESTIONS
+  if (mode === 'random') cur.list = shuffle(pool).slice(0, 20)
+  else if (mode === 'exam') cur.list = shuffle(pool).slice(0, 20)
+  else if (mode === 'wrong') cur.list = MOCK_WRONG.map(function (i) { return pool[i] }).filter(Boolean)
+  else if (mode === 'fav') cur.list = MOCK_FAV.map(function (i) { return pool[i] }).filter(Boolean)
+  else cur.list = pool.slice(0, 60)
+  cur.idx = 0; cur.answers = {}
+  state.page = mode === 'exam' ? 'exam' : 'practice'
+  render()
+}
+
+/* -------- 渲染 -------- */
+function render() {
+  var el = document.getElementById('screen')
+  var html = ''
+  var fn = { home: vHome, practice: vPractice, exam: vPractice, bank: vBank, result: vResult, wrong: vWrong, import: vImport, books: vBooks }[state.page]
+  html = fn ? fn() : vHome()
+  el.innerHTML = html
+  el.scrollTop = 0
+}
+
+function go(p) {
+  if (p === 'practice' || p === 'exam') { startPractice(p === 'exam' ? 'exam' : 'seq'); return }
+  closeBook()
+  state.page = p; state.openIdx = -1
+  render()
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+/* ---------------- 首页 ---------------- */
+function vHome() {
+  var total = quiz.QUESTIONS.length + ONLINE
+  var pct = Math.round((MOCK_ANS / total) * 100)
+  var cats = quiz.CATEGORIES.map(function (c, i) {
+    var n = quiz.countByCat(c.key) + (c.key === 'modern' ? ONLINE : 0)
+    return { key: c.key, name: c.name, desc: c.desc, total: n, done: Math.round(n * (0.3 + i * 0.06)) }
+  }).filter(function (c) { return c.total > 0 })
+
+  var tiles = [
+    { m: 'seq', n: total, l: '顺序练习', d: '从头逐题推进' },
+    { m: 'random', n: 20, l: '随机 20 题', d: '打乱检验手感' },
+    { m: 'wrong', n: MOCK_WRONG.length, l: '错题重练', d: '专攻踩过的坑' },
+    { m: 'fav', n: MOCK_FAV.length, l: '收藏练习', d: '挑出来的重点' }
+  ]
+
+  var recent = [
+    { d: '模拟考试 · 15/20', t: '10/24 21:12', a: 75 },
+    { d: '随机练习 · 17/20', t: '10/23 20:40', a: 85 }
+  ]
+
+  var h = ''
+  h += '<div class="nav"><div class="nav-title">C++ 刷题</div><div class="nav-act" onclick="go(\'bank\')">题库</div></div>'
+
+  h += '<div class="strip">'
+  h += '  <div class="st"><div class="st-n serif">' + MOCK_ANS + '</div><div class="st-l">已练 / ' + total + '</div></div>'
+  h += '  <div class="stline"></div>'
+  h += '  <div class="st"><div class="st-n serif">' + MOCK_ACC + '<span class="st-u">%</span></div><div class="st-l">正确率</div></div>'
+  h += '  <div class="stline"></div>'
+  h += '  <div class="st" onclick="go(\'wrong\')"><div class="st-n serif" style="color:var(--err)">' + MOCK_WRONG.length + '</div><div class="st-l">错题</div></div>'
+  h += '</div>'
+
+  h += '<div class="hero" onclick="startPractice(\'exam\')">'
+  h += '  <div class="spine"></div>'
+  h += '  <div class="kicker acc">Exam · 限时</div>'
+  h += '  <div class="hero-t serif">模拟考试</div>'
+  h += '  <div class="hero-d">随机 20 题 · 20 分钟 · 交卷统一出分</div>'
+  h += '  <div class="hero-cta">→</div>'
+  h += '  <div class="hero-bar"><i style="width:' + pct + '%"></i></div>'
+  h += '  <div class="hero-foot"><span>整体进度 ' + pct + '%</span><span>题库 ' + total + ' 题</span></div>'
+  h += '</div>'
+
+  h += '<div class="sec"><span class="t">练 习</span><span class="s" onclick="go(\'wrong\')">错题本 ' + MOCK_WRONG.length + ' →</span></div>'
+  h += '<div class="grid">'
+  tiles.forEach(function (t) {
+    h += '<div class="tile" onclick="startPractice(\'' + t.m + '\')">'
+    h += '  <div class="tile-n serif">' + t.n + '</div>'
+    h += '  <div class="tile-l">' + t.l + '</div>'
+    h += '  <div class="tile-d">' + t.d + '</div>'
+    h += '</div>'
+  })
+  h += '</div>'
+
+  h += '<div class="sec"><span class="t">分 类</span><span class="s">已答 / 总数</span></div>'
+  h += '<div class="list">'
+  cats.forEach(function (c) {
+    var p = Math.round((c.done / c.total) * 100)
+    h += '<div class="cat" onclick="startPractice(\'seq\',\'' + c.key + '\')">'
+    h += '  <div class="cat-b"><div class="cat-n">' + c.name + '</div>'
+    h += '  <div class="cat-d">' + c.desc + '</div>'
+    h += '  <div class="bar"><i style="width:' + p + '%"></i></div></div>'
+    h += '  <div class="cat-v serif"><span class="cur">' + c.done + '</span>/' + c.total + '</div>'
+    h += '</div>'
+  })
+  h += '</div>'
+
+  h += '<div class="sec"><span class="t">最 近</span></div><div class="list">'
+  recent.forEach(function (r) {
+    h += '<div class="rrow"><div><span class="rr-n">' + r.d + '</span><span class="rr-t">' + r.t + '</span></div>'
+    h += '<span class="rr-a serif" style="color:' + (r.a >= 60 ? 'var(--ok)' : 'var(--err)') + '">' + r.a + '%</span></div>'
+  })
+  h += '</div>'
+
+  h += '<div class="sec"><span class="t">读 书</span><span class="s">做累了就看看书</span></div>'
+  h += '<div class="list"><div class="row" onclick="go(\'books\')"><div class="rt"><div class="rn">C++ 书单</div>'
+  h += '  <div class="rd">6 本免费可读 · 6 本经典必读</div></div><div class="rarw">›</div></div></div>'
+
+  h += '<div class="sec"><span class="t">题 库</span><span class="s">在线 ' + ONLINE + ' 题</span></div>'
+  h += '<div class="list">'
+  h += '  <div class="row" onclick="go(\'bank\')"><div class="rt"><div class="rn">在线题库</div>'
+  h += '    <div class="rd">开源题库 · 用时才加载，不占包体</div></div>'
+  h += '    <div class="rv"><b>' + ONLINE + '</b> 题</div><div class="rarw">›</div></div>'
+  h += '  <div class="row" onclick="go(\'import\')"><div class="rt"><div class="rn">粘贴导入</div>'
+  h += '    <div class="rd">从牛客 / 网页复制，自动转成题目</div></div><div class="rarw">›</div></div>'
+  h += '  <div class="row"><div class="rt"><div class="rn">清空学习数据</div>'
+  h += '    <div class="rd">记录、错题、收藏</div></div><div class="rarw">›</div></div>'
+  h += '</div>'
+
+  h += '<div class="foot">C++ 刷题 v2.2 · 内置 ' + quiz.QUESTIONS.length + ' 题 + 在线加载</div>'
+  return h
+}
+
+/* ---------------- 答题页 ---------------- */
+function vPractice() {
+  var isExam = state.mode === 'exam'
+  var q = cur.list[cur.idx]
+  if (!q) return vHome()
+  var a = cur.answers[q.id] || { picked: [], answered: false }
+  var revealed = !isExam && a.answered
+  var pct = Math.round(((cur.idx + 1) / cur.list.length) * 100)
+
+  var cls = q.options.map(function (_, i) {
+    if (revealed) return q.ans.indexOf(i) >= 0 ? 'right' : (a.picked.indexOf(i) >= 0 ? 'wrong' : 'dim')
+    return a.picked.indexOf(i) >= 0 ? 'picked' : ''
+  })
+
+  var h = ''
+  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div>'
+  h += '<div class="nav-title">' + titleOf() + '</div>'
+  h += '<div class="nav-act">答题卡</div></div>'
+
+  h += '<div class="pline" style="background:linear-gradient(to right, #1B1917 0%, #1B1917 ' + pct + '%, rgba(27,25,23,.07) ' + pct + '%, rgba(27,25,23,.07) 100%)"></div>'
+
+  h += '<div class="qmeta">'
+  h += '  <span class="qm-i serif">' + (cur.idx + 1) + '<span class="qm-t">/' + cur.list.length + '</span></span>'
+  h += '  <span class="qm-dot">·</span>'
+  h += '  <span class="qm-t2">' + (TYPE_NAME[q.type] || '') + '</span>'
+  h += '  <span class="qm-t2">' + (LEVEL_NAME[q.level] || '') + '</span>'
+  if (CAT_SHORT[q.cat]) h += '  <span class="qm-cat">' + CAT_SHORT[q.cat] + '</span>'
+  h += '  <span class="qm-timer ' + (isExam ? 'exam' : '') + '">' + (isExam ? '18:42' : '00:37') + '</span>'
+  h += '</div>'
+
+  h += '<div class="qtext">' + esc(q.q) + '</div>'
+  if (q.code) h += '<div class="code">' + esc(q.code) + '</div>'
+
+  h += '<div class="opts">'
+  q.options.forEach(function (o, i) {
+    h += '<div class="opt ' + cls[i] + '" onclick="pick(' + i + ')">'
+    h += '  <span class="ok-l">' + LETTERS[i] + '</span>'
+    h += '  <span class="ot">' + esc(o) + '</span>'
+    if (cls[i] === 'right') h += '<span class="om" style="color:var(--ok)">✓</span>'
+    if (cls[i] === 'wrong') h += '<span class="om" style="color:var(--err)">✕</span>'
+    h += '</div>'
+  })
+  h += '</div>'
+
+  if (q.type === 'multi' && !a.answered) h += '<div class="mtip">多选题 · 可选多个，选完点「确认作答」</div>'
+  if (q.type === 'multi' && !a.answered) h += '<button class="btn" onclick="submitMulti()">确认作答</button>'
+
+  if (revealed) {
+    var right = a.right
+    h += '<div class="exp">'
+    h += '  <div class="exp-head"><span class="exp-st" style="color:' + (right ? 'var(--ok)' : 'var(--err)') + '">'
+      + (right ? '答对了' : '答错了') + '</span>'
+    h += '  <span class="exp-ans serif">' + q.ans.map(function (n) { return LETTERS[n] }).join('、') + '</span></div>'
+    if (!right) h += '  <div class="exp-you">你选的是 ' + (a.picked.length ? a.picked.map(function (n) { return LETTERS[n] }).join('、') : '未作答') + '</div>'
+    h += '  <div class="exp-line"></div>'
+    h += '  <div class="exp-t">' + esc(q.exp) + '</div>'
+    h += '</div>'
+  }
+
+  h += '<div class="pad-b"></div>'
+
+  var last = cur.idx === cur.list.length - 1
+  h += '<div class="bb">'
+  h += '  <div class="bb-ico ' + (cur.idx === 0 ? 'off' : '') + '" onclick="prev()">‹</div>'
+  h += '  <div class="bb-main" onclick="next()">' + (last ? (isExam ? '交卷' : '完成') : '下一题') + '</div>'
+  h += '  <div class="bb-ico" onclick="toggleFav()">☆</div>'
+  h += '</div>'
+  return h
+}
+
+function pick(i) {
+  var q = cur.list[cur.idx]
+  var a = cur.answers[q.id] || { picked: [], answered: false }
+  if (state.page === 'exam') {
+    if (a.answered) return
+    a.picked = [i]; a.answered = true
+    cur.answers[q.id] = a; render(); return
+  }
+  if (a.answered) return
+  if (q.type === 'multi') {
+    var p = a.picked.indexOf(i)
+    if (p >= 0) a.picked.splice(p, 1); else a.picked.push(i)
+    cur.answers[q.id] = a; render(); return
+  }
+  a.picked = [i]; a.answered = true
+  a.right = a.picked.slice().sort().join() === q.ans.slice().sort().join()
+  cur.answers[q.id] = a
+  render()
+}
+
+function submitMulti() {
+  var q = cur.list[cur.idx]
+  var a = cur.answers[q.id]
+  if (!a || !a.picked.length) return
+  a.answered = true
+  a.right = a.picked.slice().sort().join() === q.ans.slice().sort().join()
+  render()
+}
+
+function prev() {
+  if (cur.idx === 0) return
+  cur.idx--; render()
+}
+
+function next() {
+  if (state.page !== 'exam') {
+    var q = cur.list[cur.idx]
+    var a = cur.answers[q.id]
+    if (!a || !a.answered) { flash('请先作答'); return }
+  }
+  if (cur.idx >= cur.list.length - 1) { state.page = 'result'; render(); return }
+  cur.idx++; render()
+}
+
+function toggleFav() { flash('已收藏') }
+
+var flashT = null
+function flash(msg) {
+  var el = document.getElementById('flash')
+  if (!el) {
+    el = document.createElement('div')
+    el.id = 'flash'
+    el.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(27,25,23,.86);'
+      + 'color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;z-index:99;transition:opacity .2s;pointer-events:none'
+    document.body.appendChild(el)
+  }
+  el.textContent = msg
+  el.style.opacity = '1'
+  clearTimeout(flashT)
+  flashT = setTimeout(function () { el.style.opacity = '0' }, 1100)
+}
+
+/* ---------------- 题库页 ---------------- */
+var SRCS = [
+  { id: 'cpp11', name: 'C++11 核心特性', desc: 'auto / lambda / 右值引用 / 智能指针', tag: 'C++', n: 10, time: '10/24', on: true },
+  { id: 'cpp14', name: 'C++14 特性', desc: '泛型 lambda / 变量模板 / make_unique', tag: 'C++', n: 8, time: '10/24', on: true },
+  { id: 'cpp17', name: 'C++17 特性', desc: '结构化绑定 / if constexpr / optional', tag: 'C++', n: 24, time: '10/24', on: true },
+  { id: 'cpp20', name: 'C++20 特性', desc: 'concepts / ranges / 协程 / 三向比较', tag: 'C++', n: 10, time: '10/24', on: true },
+  { id: 'otdb', name: '计算机基础', desc: 'Open Trivia DB 开放接口 · 英文 · 每次随机', tag: '扩充', n: 0, time: '', on: false }
+]
+
+function vBank() {
+  var h = ''
+  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div><div class="nav-title">题库</div></div>'
+  h += '<div class="head"><div class="kicker">Online Bank</div>'
+  h += '<div class="h1 serif">在线题库</div>'
+  h += '<div class="head-d">题不打包进小程序。用的时候才联网拉，拉下来存在本地，下次直接读。</div></div>'
+
+  h += '<div class="sum">'
+  h += '<div class="sum-i"><div class="sum-n serif">' + quiz.QUESTIONS.length + '</div><div class="sum-l">内置</div></div>'
+  h += '<div class="sumline"></div>'
+  h += '<div class="sum-i"><div class="sum-n serif acc">' + ONLINE + '</div><div class="sum-l">在线</div></div>'
+  h += '<div class="sumline"></div>'
+  h += '<div class="sum-i"><div class="sum-n serif">' + (quiz.QUESTIONS.length + ONLINE) + '</div><div class="sum-l">合计</div></div>'
+  h += '</div>'
+
+  h += '<div class="sec"><span class="t">来 源</span><span class="s">已启用 4 个</span></div><div class="list">'
+  SRCS.forEach(function (s) {
+    h += '<div class="src"><div class="src-top"><div class="src-b">'
+    h += '<div class="src-n">' + s.name + '<span class="src-tag">' + s.tag + '</span></div>'
+    h += '<div class="src-d">' + s.desc + '</div></div>'
+    h += '<div class="tg ' + (s.on ? 'on' : '') + '" onclick="toggleSrc(\'' + s.id + '\')"><div class="tg-k"></div></div>'
+    h += '</div><div class="src-foot"><span class="src-st">'
+      + (s.n > 0 ? '已缓存 ' + s.n + ' 题 · ' + s.time : '尚未加载') + '</span>'
+    h += '<span class="src-op" onclick="refreshOne(\'' + s.id + '\')">单独刷新</span></div></div>'
+  })
+  h += '</div>'
+
+  h += '<div style="margin-top:14px"><button class="btn ' + (state.loading ? 'plain' : '') + '" onclick="refreshAll()">'
+    + (state.loading ? '加载中…' : '刷新已启用题库') + '</button></div>'
+  if (state.log) h += '<div class="log ' + state.logTone + '">' + state.log + '</div>'
+
+  h += '<div class="sec"><span class="t">其 它</span></div><div class="list">'
+  h += '<div class="row" onclick="go(\'import\')"><div class="rt"><div class="rn">粘贴导入</div>'
+    + '<div class="rd">牛客、网页、文档里的题，复制过来就能刷</div></div><div class="rarw">›</div></div>'
+  h += '<div class="row"><div class="rt"><div class="rn" style="color:var(--err)">清空在线题目</div>'
+    + '<div class="rd">回到只有内置 ' + quiz.QUESTIONS.length + ' 题的状态</div></div><div class="rarw">›</div></div>'
+  h += '</div>'
+
+  h += '<div class="note">内置题随包发布；在线题靠网络加载，缓存后离线也能刷。'
+    + '真机上线前，请在小程序后台把 cdn.jsdelivr.net 加入 request 合法域名，或填好云开发环境 ID 走云函数代理。</div>'
+  return h
+}
+
+function toggleSrc(id) {
+  SRCS.forEach(function (s) { if (s.id === id) s.on = !s.on })
+  render()
+}
+
+function refreshOne(id) {
+  var s = SRCS.filter(function (x) { return x.id === id })[0]
+  if (!s) return
+  state.loading = true; state.log = '正在连接 ' + s.name + '…'; state.logTone = 'dim'
+  render()
+  setTimeout(function () {
+    state.loading = false
+    s.n = s.n || 10
+    state.log = s.name + '：已是最新，' + s.n + ' 题'
+    state.logTone = 'ok'
+    render()
+  }, 900)
+}
+
+/* 真的去拉一次 jsDelivr，验证在线加载这条路是通的 */
+function refreshAll() {
+  state.loading = true; state.log = '正在连接 cdn.jsdelivr.net…'; state.logTone = 'dim'
+  render()
+  var base = 'https://cdn.jsdelivr.net/gh/celilygt/cpp-quiz@master/content/questions/'
+  var ids = ['cpp11', 'cpp14', 'cpp17', 'cpp20']
+  var exist = quiz.QUESTIONS.map(function (q) { return q.id })
+  var total = 0, ok = 0
+
+  Promise.all(ids.map(function (id) {
+    return fetch(base + id + '.json').then(function (r) { return r.json() })
+      .then(function (j) { var res = adapter.normalize(j, exist); total += res.converted; ok++; return res })
+      .catch(function () { return null })
+  })).then(function () {
+    state.loading = false
+    if (!ok) {
+      state.log = '网络不可达（离线预览）。真机上会走云函数或已配置的合法域名。'
+      state.logTone = 'err'
+    } else {
+      state.log = '真实拉取成功：' + ok + ' / 4 个源，解析出 ' + total + ' 题'
+      state.logTone = 'ok'
+    }
+    render()
+  })
+}
+
+
+/* ---------------- 书架 ---------------- */
+function vBooks() {
+  var B = window.BOOK_DATA
+  var h = ''
+  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div><div class="nav-title">书架</div>'
+  h += '<div class="nav-act" onclick="flash(\'书单已复制\')">复制书单</div></div>'
+  h += '<div class="head"><div class="kicker">Reading List</div><div class="h1 serif">C++ 书单</div>'
+  h += '<div class="head-d">题做累了就看书。橙色书脊的能直接打开，灰色的需要自己买。</div></div>'
+
+  h += '<div class="hint"><div class="hint-t">点任意一本书 → 弹出详情。橙色那 6 本可直接「在线阅读 PDF / 打开官网」；'
+    + '灰色那 6 本是仍在售的版权书，只给书目，可以复制书名去搜。</div></div>'
+
+  var groups = [{ k: 'free', t: '免 费 可 读', s: '作者授权 / 公开文档' }, { k: 'classic', t: '经 典 必 读', s: '需自行购买 / 借阅' }]
+  groups.forEach(function (g) {
+    var list = B.BOOKS.filter(function (b) { return b.group === g.k })
+    h += '<div class="sec"><span class="t">' + g.t + '</span><span class="s">' + g.s + '</span></div>'
+    h += '<div class="shelf">'
+    list.forEach(function (b) {
+      h += '<div class="bk ' + (g.k === 'free' ? 'free' : '') + '" onclick="openBook(\'' + b.id + '\')">'
+      h += '<div class="bk-spine"></div><div class="bk-body">'
+      h += '<div class="bk-t">' + b.title + '</div>'
+      h += '<div class="bk-en">' + b.en + '</div>'
+      h += '<div class="bk-meta">' + b.author + '<span class="dot">·</span>' + b.level + '</div>'
+      h += '<div class="bk-desc">' + b.desc + '</div>'
+      h += '<div class="bk-why"><span class="why-k">为什么读</span><span class="why-v">' + b.why + '</span></div>'
+      h += '<div class="bk-foot"><span class="lic">' + (b.lic || b.note || '') + '</span>'
+      h += '<span class="act ' + (g.k === 'free' ? '' : 'gray') + '">'
+        + (g.k === 'free' ? '点开看书 →' : '怎么拿到 →') + '</span></div>'
+      h += '</div></div>'
+    })
+    h += '</div>'
+  })
+
+  h += '<div class="note">本页不收任何书籍文件。橙色那组是作者或基金会免费授权发布的（欧长坤《现代 C++ 教程》采用 CC BY-NC-ND 4.0），'
+    + '点开是作者官网的原始 PDF；灰色那组是仍在售的版权书，只给书目信息，建议购买或到图书馆借阅。</div>'
+  return h
+}
+
+/* ---------------- 图书详情浮层 ---------------- */
+function findBook(id) {
+  var B = window.BOOK_DATA
+  if (!B) return null
+  for (var i = 0; i < B.BOOKS.length; i++) if (B.BOOKS[i].id === id) return B.BOOKS[i]
+  return null
+}
+
+function fallbackCopy(s, done) {
+  var ta = document.createElement('textarea')
+  ta.value = s
+  ta.style.position = 'fixed'
+  ta.style.top = '-999px'
+  ta.style.opacity = '0'
+  document.body.appendChild(ta)
+  ta.select()
+  var ok = false
+  try { ok = document.execCommand('copy') } catch (e) { ok = false }
+  document.body.removeChild(ta)
+  if (ok) done(); else flash('复制失败，请手动选中链接')
+}
+
+function copyText(s, msg) {
+  var done = function () { flash(msg || '已复制') }
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(s).then(done, function () { fallbackCopy(s, done) })
+  } else {
+    fallbackCopy(s, done)
+  }
+}
+
+function openBook(id) {
+  var b = findBook(id)
+  if (!b) return
+  var free = b.group === 'free'
+  var h = '<div class="sp-handle"></div>'
+  h += '<div class="sp-kick">' + (free ? '免费可读' : '经典必读') + '</div>'
+  h += '<div class="sp-t">' + b.title + '</div>'
+  h += '<div class="sp-en">' + b.en + '</div>'
+  h += '<div class="sp-meta">' + b.author + ' · ' + b.year + ' · ' + b.level + '</div>'
+  h += '<div class="sp-line"></div>'
+  h += '<div class="sp-d">' + b.desc + '</div>'
+  h += '<div class="sp-why"><span class="k">为什么读</span><span class="v">' + b.why + '</span></div>'
+  if (free) {
+    h += '<div class="sp-lic">' + (b.lic || '') + (b.size ? ' · ' + b.size : '') + '</div>'
+    h += '<div class="sp-btns">'
+    h += '<a class="sp-btn" href="' + b.url + '" target="_blank" rel="noopener">'
+      + (b.action === 'pdf' ? '在线阅读 PDF ↗' : '打开官方文档 ↗') + '</a>'
+    h += '<button class="sp-btn ghost" onclick="copyText(\'' + b.url + '\',\'链接已复制，去浏览器粘贴\')">复制链接</button>'
+    h += '<button class="sp-btn plain" onclick="closeBook()">关闭</button>'
+    h += '</div>'
+  } else {
+    h += '<div class="sp-lic">' + (b.note || '') + '</div>'
+    h += '<div class="sp-d" style="margin-top:12px;color:var(--ink3);font-size:11.5px">'
+      + '这本是仍在售的版权书，本页只给书目信息，不提供电子版。</div>'
+    h += '<div class="sp-btns">'
+    h += '<button class="sp-btn" onclick="copyText(\'' + (b.title + ' ' + (b.en || '')).replace(/'/g, '') + '\',\'书名已复制\')">复制书名去搜</button>'
+    h += '<button class="sp-btn plain" onclick="closeBook()">关闭</button>'
+    h += '</div>'
+  }
+  var pane = document.getElementById('spane')
+  var wrap = document.getElementById('sheetwrap')
+  wrap.classList.remove('on')
+  pane.innerHTML = h
+  pane.scrollTop = 0
+  if (document.documentElement.className.indexOf('still') >= 0) {
+    wrap.classList.add('on')
+    return
+  }
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { wrap.classList.add('on') })
+  })
+}
+
+function closeBook() {
+  var wrap = document.getElementById('sheetwrap')
+  if (!wrap) return
+  wrap.classList.remove('on')
+  setTimeout(function () {
+    if (!wrap.classList.contains('on')) document.getElementById('spane').innerHTML = ''
+  }, 300)
+}
+
+/* ---------------- 结果 ---------------- */
+function vResult() {
+  var src = cur.list.length ? cur.list : quiz.QUESTIONS
+  var items = src.slice(0, 8)
+  var h = ''
+  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div><div class="nav-title">模拟考试</div></div>'
+  h += '<div class="rs"><div class="kicker">Result</div>'
+  h += '<div class="rs-n"><span class="serif">75</span><span class="rs-u">分</span></div>'
+  h += '<div class="rs-c">不错，错题再巩固一下</div>'
+  h += '<div class="rs-row">'
+  h += '<div class="rs-i"><span class="serif" style="color:var(--ok)">15</span><span class="rs-l">答对</span></div><div class="rsline"></div>'
+  h += '<div class="rs-i"><span class="serif" style="color:var(--err)">5</span><span class="rs-l">答错</span></div><div class="rsline"></div>'
+  h += '<div class="rs-i"><span class="serif">20</span><span class="rs-l">总题数</span></div><div class="rsline"></div>'
+  h += '<div class="rs-i"><span class="serif">12:31</span><span class="rs-l">用时</span></div>'
+  h += '</div></div>'
+
+  h += '<div class="sec"><span class="t">逐 题 解 析</span><span class="s">点开看答案</span></div><div class="items">'
+  items.forEach(function (q, i) {
+    var right = i % 4 !== 1
+    var open = state.openIdx === i
+    h += '<div class="it ' + (open ? 'open' : '') + '" onclick="toggleItem(' + i + ')">'
+    h += '<div class="it-head"><span class="it-no" style="color:' + (right ? 'var(--ok)' : 'var(--err)') + '">' + (i + 1) + '</span>'
+    h += '<span class="it-q">' + esc(q.q) + '</span>'
+    h += '<span class="it-mark" style="color:' + (right ? 'var(--ok)' : 'var(--err)') + '">' + (right ? '✓' : '✕') + '</span></div>'
+    if (open) {
+      h += '<div class="it-body">'
+      if (q.code) h += '<div class="code">' + esc(q.code) + '</div>'
+      h += '<div class="it-l"><span class="k">正确答案</span><span class="v serif" style="color:var(--ok)">'
+        + q.ans.map(function (n) { return LETTERS[n] }).join('、') + '</span></div>'
+      h += '<div class="it-l"><span class="k">你的答案</span><span class="v serif" style="color:'
+        + (right ? 'var(--ok)' : 'var(--err)') + '">' + (right ? q.ans.map(function (n) { return LETTERS[n] }).join('、') : 'B') + '</span></div>'
+      h += '<div class="it-exp">' + esc(q.exp) + '</div>'
+      h += '</div>'
+    }
+    h += '</div>'
+  })
+  h += '</div>'
+
+  h += '<div class="btns"><button class="btn ghost" onclick="go(\'home\')">返回首页</button>'
+    + '<button class="btn" onclick="startPractice(\'exam\')">再来一组</button></div>'
+  h += '<div class="link" onclick="go(\'wrong\')">查看错题本 →</div>'
+  return h
+}
+
+function toggleItem(i) {
+  state.openIdx = state.openIdx === i ? -1 : i
+  render()
+}
+
+/* ---------------- 错题本 ---------------- */
+function vWrong() {
+  var ids = state.tab === 'wrong' ? MOCK_WRONG : MOCK_FAV
+  var list = ids.map(function (i) { return quiz.QUESTIONS[i] }).filter(Boolean)
+  var h = ''
+  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div><div class="nav-title">复习</div></div>'
+  h += '<div class="tabs">'
+  h += '<div class="tab ' + (state.tab === 'wrong' ? 'on' : '') + '" onclick="switchTab(\'wrong\')">错题<span class="tab-n">' + MOCK_WRONG.length + '</span></div>'
+  h += '<div class="tab ' + (state.tab === 'fav' ? 'on' : '') + '" onclick="switchTab(\'fav\')">收藏<span class="tab-n">' + MOCK_FAV.length + '</span></div>'
+  h += '</div>'
+
+  if (!list.length) {
+    h += '<div class="empty"><div class="e1">0</div><div class="e2">错题本是空的，继续保持</div></div>'
+    return h
+  }
+
+  h += '<div class="sec"><span class="t">题 目</span><span class="s">点开看解析</span></div><div class="items">'
+  list.forEach(function (q, i) {
+    var open = state.openIdx === i
+    h += '<div class="it ' + (open ? 'open' : '') + '" onclick="toggleItem(' + i + ')">'
+    h += '<div class="it-head"><span class="it-no" style="color:var(--ink3)">' + (i + 1) + '</span>'
+    h += '<span class="it-q">' + esc(q.q) + '</span></div>'
+    h += '<div style="padding:6px 0 0 26px">'
+    h += '<span class="tag">' + (CAT_NAME[q.cat] || '') + '</span>'
+    h += '<span class="tag">' + (TYPE_NAME[q.type] || '') + '</span>'
+    if (state.tab === 'wrong') h += '<span class="tag err">错 ' + ((i % 3) + 1) + ' 次</span>'
+    h += '</div>'
+    if (open) {
+      h += '<div class="it-body">'
+      if (q.code) h += '<div class="code">' + esc(q.code) + '</div>'
+      h += '<div class="it-l"><span class="k">正确答案</span><span class="v serif" style="color:var(--ok)">'
+        + q.ans.map(function (n) { return LETTERS[n] }).join('、') + '</span></div>'
+      h += '<div class="it-exp">' + esc(q.exp) + '</div>'
+      h += '<div class="it-rm">' + (state.tab === 'wrong' ? '已掌握，移出错题本' : '取消收藏') + '</div>'
+      h += '</div>'
+    }
+    h += '</div>'
+  })
+  h += '</div>'
+
+  h += '<div class="pb"></div>'
+  h += '<div class="bb">'
+  h += '<div class="bb-ico">⌫</div>'
+  h += '<div class="bb-main" onclick="startPractice(\'' + (state.tab === 'wrong' ? 'wrong' : 'fav') + '\')">'
+    + (state.tab === 'wrong' ? '重练错题' : '练习收藏') + '</div>'
+  h += '<div class="bb-ico" style="opacity:0">·</div></div>'
+  return h
+}
+
+function switchTab(t) { state.tab = t; state.openIdx = -1; render() }
+
+/* ---------------- 导入 ---------------- */
+var SAMPLE = '1. 下列关于虚函数表的说法，正确的是？\nA. 每个类都有一张虚函数表\nB. 含有虚函数的类才有虚函数表，对象中存放 vptr\nC. 虚函数表在栈上分配\nD. 虚函数表每个对象一份\n答案：B\n解析：只有含虚函数的类才有 vtable，对象内只存一个指针 vptr。\n\n2. 下列哪些属于稳定排序？\nA. 归并排序\nB. 冒泡排序\nC. 快速排序\nD. 简单选择排序\n【答案】A,B'
+
+function vImport() {
+  var h = ''
+  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div><div class="nav-title">导入</div></div>'
+  h += '<div class="head"><div class="kicker">Import</div><div class="h1 serif">粘贴导入</div>'
+  h += '<div class="head-d">牛客、网页、Word 里的题，整段复制过来，自动切成可刷的题。</div></div>'
+
+  h += '<div class="ta-card"><textarea class="ta" id="ta" placeholder="在此粘贴，支持一次多题：&#10;&#10;1. 题干……&#10;A. 选项 A&#10;B. 选项 B&#10;C. 选项 C&#10;D. 选项 D&#10;答案：B&#10;解析：……">' + (window.TA_TEXT || '') + '</textarea>'
+  h += '<div class="ta-foot"><span class="ta-op" onclick="fillSample()">填入示例</span>'
+    + '<span class="ta-op dim" onclick="clearTa()">清空</span></div></div>'
+
+  h += '<div class="pick"><span class="pick-k">归入分类</span><span class="pick-v">C++ 语法基础 <span class="pick-arw">▾</span></span></div>'
+  h += '<button class="btn" onclick="doParse()">解析预览</button>'
+
+  var list = window.PARSE_LIST || []
+  if (list.length) {
+    h += '<div class="sec"><span class="t">识 别 结 果</span><span class="s">' + list.length + ' 题可导入</span></div>'
+    list.slice(0, 3).forEach(function (q, i) {
+      h += '<div style="background:#fff;border-radius:12px;padding:15px;margin-bottom:8px;border:1px solid var(--line)">'
+      h += '<div style="display:flex;justify-content:space-between;margin-bottom:8px">'
+      h += '<span class="tag">' + (q.type === 'multi' ? '多选' : (q.type === 'judge' ? '判断' : '单选')) + '</span>'
+      h += '<span style="font-size:10.5px;color:var(--ink4)">第 ' + (i + 1) + ' 题</span></div>'
+      h += '<div style="font-size:13.5px;line-height:1.7;margin-bottom:7px">' + esc(q.q) + '</div>'
+      q.options.forEach(function (o, k) {
+        var isAns = q.ans.indexOf(k) >= 0
+        h += '<div style="display:flex;padding:2px 0"><span class="serif" style="width:20px;flex-shrink:0;font-size:12.5px;color:'
+          + (isAns ? 'var(--ok)' : 'var(--ink3)') + '">' + LETTERS[k] + '</span>'
+        h += '<span style="flex:1;font-size:12.5px;color:var(--ink2)">' + esc(o) + '</span></div>'
+      })
+      h += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line2);font-size:11.5px;color:var(--ink3)">'
+        + '正确答案 <b class="serif" style="color:var(--ok);font-size:13px;margin-left:4px">'
+        + q.ans.map(function (n) { return LETTERS[n] }).join('、') + '</b></div>'
+      h += '</div>'
+    })
+    h += '<div style="margin-top:10px"><button class="btn" onclick="flash(\'已导入\')">导入 ' + list.length + ' 题</button></div>'
+  }
+
+  h += '<div class="sec"><span class="t">支 持 写 法</span></div><div class="fmt">'
+  ;[['选项', 'A. ｜ A、 ｜ A) ｜（A） ｜ A: 都行'],
+    ['答案', '答案：B ｜【答案】A,B ｜ 正确答案：C'],
+    ['多选', '写 A,B 或 A、B、D，自动判成多选'],
+    ['判断', '选项是「正确 / 错误」时自动判成判断'],
+    ['解析', '以「解析：」开头，可以没有'],
+    ['题号', '1. ｜ 1、 ｜ 第 1 题，也可以不写']].forEach(function (r) {
+    h += '<div class="f"><span class="f-k">' + r[0] + '</span><span class="f-v">' + r[1] + '</span></div>'
+  })
+  h += '</div><div class="pb"></div>'
+  return h
+}
+
+function fillSample() {
+  window.TA_TEXT = SAMPLE
+  render()
+  doParse()
+}
+
+function clearTa() {
+  window.TA_TEXT = ''
+  window.PARSE_LIST = null
+  render()
+}
+
+function doParse() {
+  var ta = document.getElementById('ta')
+  var txt = ta ? ta.value : (window.TA_TEXT || '')
+  window.TA_TEXT = txt
+  if (!txt.trim()) { flash('先粘贴题目'); return }
+  var r = adapter.parseText(txt, 'syntax', [])
+  if (!r.converted) { flash('没识别到题目'); return }
+  window.PARSE_LIST = r.list
+  render()
+  flash('识别 ' + r.converted + ' 题')
+}
+
+/* 初始化 */
+var _hash = (location.hash || '').replace('#', '')
+/* 支持 #practice / #practice-algo / #practice-random-algo / #wrong / #fav，方便逐入口验收标题 */
+var _isPrac = _hash.indexOf('practice') === 0 || _hash === 'exam' || _hash === 'wrong' || _hash === 'fav' || _hash === 'random'
+if (_isPrac) {
+  var _parts = _hash.split('-')
+  var _m = 'seq'
+  var _c = ''
+  if (_hash === 'wrong') _m = 'wrong'
+  else if (_hash === 'fav') _m = 'fav'
+  else if (_hash === 'random') _m = 'random'
+  else if (_hash === 'exam') _m = 'exam'
+  else if (_parts.length > 1) {
+    if (MODE_LABEL[_parts[1]]) { _m = _parts[1]; _c = _parts[2] || '' }
+    else { _c = _parts[1] }
+  }
+  startPractice(_m, _c)
+  pick(0)
+} else if (_hash.indexOf('books') === 0) {
+  state.page = 'books'
+  render()
+  var _bid = _hash.split('-')[1]
+  if (_bid) openBook(_bid)
+} else if (_hash === 'import') {
+  window.TA_TEXT = SAMPLE
+  state.page = 'import'; render(); doParse()
+} else if (_hash) {
+  state.page = _hash; render()
+} else {
+  render()
+}
+</script>
+
+</body>
+</html>

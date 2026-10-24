@@ -1,0 +1,89 @@
+<view class="page">
+
+  <view class="nav" style="padding-top:{{statusBar}}px">
+    <view class="nav-back" bindtap="goBack">‹</view>
+    <view class="nav-title">书架</view>
+    <view class="nav-act" bindtap="copyAll">复制书单</view>
+  </view>
+
+  <view class="head fade-up">
+    <view class="kicker">Reading List</view>
+    <view class="h1 serif">C++ 书单</view>
+    <view class="head-d">题做累了就看书。橙色书脊的能直接打开，灰色的需要自己买。</view>
+  </view>
+
+  <!-- 怎么才能看：说清楚路径，避免点了没反应 -->
+  <view class="hint" wx:if="{{showHint}}">
+    <view class="hint-t">橙色那 6 本点一下就能看：PDF 首次要联网下载（约 0.5 MB），下完用微信自带的阅读器打开。
+      若提示「域名不合法」，说明后台还没配 downloadFile 域名——点书里的「复制链接」，粘到聊天框照样能看。</view>
+    <view class="hint-x" bindtap="hideHint">知道了</view>
+  </view>
+
+  <!-- 免费可读 -->
+  <view class="sec">
+    <text class="t">免 费 可 读</text>
+    <text class="s">{{freeList.length}} 本</text>
+  </view>
+
+  <view class="shelf">
+    <view class="bk free" wx:for="{{freeList}}" wx:key="id" data-id="{{item.id}}" bindtap="onTap">
+      <view class="bk-spine"></view>
+      <view class="bk-body">
+        <view class="bk-t">{{item.title}}</view>
+        <view class="bk-en">{{item.en}}</view>
+        <view class="bk-meta">
+          <text>{{item.author}}</text>
+          <text class="dot">·</text>
+          <text>{{item.level}}</text>
+        </view>
+        <view class="bk-desc">{{item.desc}}</view>
+        <view class="bk-why">
+          <text class="why-k">为什么读</text>
+          <text class="why-v">{{item.why}}</text>
+        </view>
+        <view class="bk-foot">
+          <text class="lic">{{item.lic}}</text>
+          <text class="act">{{busyId === item.id ? '打开中…' : (item.action === 'pdf' ? '在线阅读 PDF →' : '打开官网 →')}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 经典 -->
+  <view class="sec">
+    <text class="t">经 典 必 读</text>
+    <text class="s">需自行购买 / 借阅</text>
+  </view>
+
+  <view class="shelf">
+    <view class="bk" wx:for="{{classicList}}" wx:key="id" data-id="{{item.id}}" bindtap="onTap">
+      <view class="bk-spine"></view>
+      <view class="bk-body">
+        <view class="bk-t">{{item.title}}</view>
+        <view class="bk-en">{{item.en}}</view>
+        <view class="bk-meta">
+          <text>{{item.author}}</text>
+          <text class="dot">·</text>
+          <text>{{item.year}}</text>
+        </view>
+        <view class="bk-desc">{{item.desc}}</view>
+        <view class="bk-why">
+          <text class="why-k">为什么读</text>
+          <text class="why-v">{{item.why}}</text>
+        </view>
+        <view class="bk-foot">
+          <text class="lic gray">{{item.note}}</text>
+          <text class="act gray">怎么拿到 →</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="note">
+    本页不收任何书籍文件。绿色那组是作者或基金会免费授权发布的（如欧长坤《现代 C++ 教程》采用 CC BY-NC-ND 4.0），
+    点开是作者官网的原始 PDF，走网络下载、不打包进小程序；灰色那组是仍在售的版权书，
+    只给书目信息，建议购买或到图书馆借阅。
+  </view>
+
+  <view class="pb"></view>
+</view>

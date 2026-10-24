@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/practice/practice",
+    "pages/result/result",
+    "pages/wrong/wrong",
+    "pages/import/import",
+    "pages/bank/bank",
+    "pages/books/books"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationStyle": "custom",
+    "navigationBarBackgroundColor": "#F6F3EC",
+    "navigationBarTitleText": "C++ 刷题",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F6F3EC",
+    "enablePullDownRefresh": false
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

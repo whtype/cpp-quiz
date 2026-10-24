@@ -1,0 +1,74 @@
+<view class="page">
+
+  <view class="nav" style="padding-top:{{statusBar}}px">
+    <view class="nav-back" bindtap="goHome">‹</view>
+    <view class="nav-title">{{modeName}}</view>
+  </view>
+
+  <!-- 成绩 -->
+  <view class="rs fade-up">
+    <view class="kicker">Result</view>
+    <view class="rs-n">
+      <text class="serif">{{score}}</text><text class="rs-u">分</text>
+    </view>
+    <view class="rs-c">{{comment}}</view>
+
+    <view class="rs-row">
+      <view class="rs-i">
+        <text class="serif ok-c">{{correct}}</text>
+        <text class="rs-l">答对</text>
+      </view>
+      <view class="rs-line"></view>
+      <view class="rs-i">
+        <text class="serif err-c">{{wrongNum}}</text>
+        <text class="rs-l">答错</text>
+      </view>
+      <view class="rs-line"></view>
+      <view class="rs-i">
+        <text class="serif">{{total}}</text>
+        <text class="rs-l">总题数</text>
+      </view>
+      <view class="rs-line"></view>
+      <view class="rs-i">
+        <text class="serif">{{elapsedText}}</text>
+        <text class="rs-l">用时</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="sec">
+    <text class="t">逐 题 解 析</text>
+    <text class="s">点开看答案</text>
+  </view>
+
+  <view class="items">
+    <view class="it {{openIdx === index ? 'open' : ''}}" wx:for="{{items}}" wx:key="id" data-i="{{index}}" bindtap="toggleItem">
+      <view class="it-head">
+        <text class="it-no serif {{item.right ? 'ok-c' : 'err-c'}}">{{index + 1}}</text>
+        <text class="it-q">{{item.q}}</text>
+        <text class="it-mark {{item.right ? 'ok-c' : 'err-c'}}">{{item.right ? '✓' : '✕'}}</text>
+      </view>
+
+      <view class="it-body fade-up" wx:if="{{openIdx === index}}">
+        <view class="code" wx:if="{{item.code}}">{{item.code}}</view>
+        <view class="it-l">
+          <text class="k">正确答案</text>
+          <text class="v ok-c serif">{{item.answerText}}</text>
+        </view>
+        <view class="it-l">
+          <text class="k">你的答案</text>
+          <text class="v serif {{item.right ? 'ok-c' : 'err-c'}}">{{item.pickedText}}</text>
+        </view>
+        <view class="it-exp">{{item.exp}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="btns">
+    <view class="btn btn-ghost" bindtap="goHome">返回首页</view>
+    <view class="btn" bindtap="again">再来一组</view>
+  </view>
+
+  <view class="link" bindtap="practiceWrong">查看错题本 →</view>
+
+</view>

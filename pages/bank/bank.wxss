@@ -1,0 +1,160 @@
+/* 题库页 */
+
+.head { padding: 24rpx 4rpx 0; }
+
+.head .h1 { margin-top: 16rpx; font-size: 60rpx; }
+
+.head-d {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: var(--ink-3);
+  max-width: 560rpx;
+}
+
+/* 概览 */
+.sum {
+  display: flex;
+  align-items: center;
+  margin-top: 36rpx;
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 34rpx 0;
+  box-shadow: 0 2rpx 4rpx rgba(27, 25, 23, 0.03), 0 16rpx 40rpx -28rpx rgba(27, 25, 23, 0.18);
+}
+
+.sum-i { flex: 1; text-align: center; }
+
+.sum-n {
+  font-size: 52rpx;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sum-n.accent { color: var(--accent); }
+
+.sum-l {
+  margin-top: 10rpx;
+  font-size: 21rpx;
+  letter-spacing: 2rpx;
+  color: var(--ink-3);
+}
+
+.sum-line {
+  width: 1rpx;
+  height: 56rpx;
+  background: var(--line);
+}
+
+/* 源 */
+.src {
+  padding: 28rpx 32rpx;
+  position: relative;
+}
+
+.src + .src::before {
+  content: '';
+  position: absolute;
+  left: 32rpx;
+  right: 32rpx;
+  top: 0;
+  height: 1rpx;
+  background: var(--line-2);
+}
+
+.src-top {
+  display: flex;
+  align-items: flex-start;
+}
+
+.src-b { flex: 1; min-width: 0; padding-right: 20rpx; }
+
+.src-n {
+  display: flex;
+  align-items: center;
+  font-size: 29rpx;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.src-tag {
+  margin-left: 12rpx;
+  padding: 2rpx 10rpx;
+  font-size: 19rpx;
+  letter-spacing: 1rpx;
+  color: var(--ink-3);
+  background: rgba(27, 25, 23, 0.05);
+  border-radius: 4rpx;
+}
+
+.src-d {
+  margin-top: 5rpx;
+  font-size: 21rpx;
+  color: var(--ink-3);
+}
+
+.src-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14rpx;
+}
+
+.src-st {
+  font-size: 21rpx;
+  color: var(--ink-4);
+}
+
+.src-op {
+  font-size: 21rpx;
+  color: var(--accent);
+  padding: 4rpx 0 4rpx 16rpx;
+}
+
+/* 自定义开关 */
+.tg {
+  width: 78rpx;
+  height: 44rpx;
+  border-radius: 999rpx;
+  background: rgba(27, 25, 23, 0.13);
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+  transition: background 0.2s;
+}
+
+.tg-k {
+  position: absolute;
+  top: 4rpx;
+  left: 4rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(27, 25, 23, 0.2);
+  transition: left 0.2s;
+}
+
+.tg.on { background: var(--accent); }
+.tg.on .tg-k { left: 38rpx; }
+
+/* 日志 */
+.log {
+  margin-top: 24rpx;
+  text-align: center;
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+  color: var(--ink-3);
+}
+
+.log.ok { color: var(--ok); }
+.log.err { color: var(--err); }
+
+/* 底部说明 */
+.note {
+  margin-top: 48rpx;
+  padding: 0 4rpx 40rpx;
+  font-size: 21rpx;
+  line-height: 1.8;
+  color: var(--ink-4);
+}

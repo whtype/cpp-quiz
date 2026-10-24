@@ -1,0 +1,64 @@
+{
+  "questions": [
+    {
+      "id": "r001",
+      "cat": "syntax",
+      "type": "single",
+      "level": 2,
+      "q": "std::vector 的 capacity() 表示什么？",
+      "options": [
+        "当前元素个数",
+        "当前已分配内存可容纳的元素个数",
+        "已使用的字节数",
+        "剩余可用容量"
+      ],
+      "ans": [1],
+      "exp": "size() 是元素个数，capacity() 是不重新分配内存的前提下最多能容纳的元素数。capacity >= size。"
+    },
+    {
+      "id": "r002",
+      "cat": "algo",
+      "type": "judge",
+      "level": 2,
+      "q": "堆排序的时间复杂度为 O(n log n)，且是不稳定排序。",
+      "options": ["正确", "错误"],
+      "ans": [0],
+      "exp": "正确。堆排序通过反复取堆顶并调整堆完成，元素跨越式交换会破坏相对顺序，因此不稳定。"
+    },
+    {
+      "id": "r003",
+      "cat": "interview",
+      "type": "multi",
+      "level": 2,
+      "q": "下列哪些操作会使 std::vector 的迭代器失效？（多选）",
+      "options": [
+        "push_back 触发扩容",
+        "erase 删除某个元素（该位置及之后）",
+        "clear()",
+        "reserve 增大容量但未添加元素"
+      ],
+      "ans": [0, 1, 2],
+      "exp": "扩容会搬移全部元素使所有迭代器失效；erase 使被删位置及之后失效；clear 销毁所有元素，同样全部失效。"
+    },
+    {
+      "id": "r004",
+      "cat": "syntax",
+      "type": "single",
+      "level": 1,
+      "q": "下列哪个容器保证元素在内存中连续存储？",
+      "options": ["std::list", "std::vector", "std::deque", "std::map"],
+      "ans": [1],
+      "exp": "vector 保证元素连续（这也是 data() 能返回裸指针、可与 C API 互操作的原因）；deque 是分段连续。"
+    },
+    {
+      "id": "r005",
+      "cat": "interview",
+      "type": "judge",
+      "level": 2,
+      "q": "std::shared_ptr 的引用计数操作是线程安全的，但多个线程读写它所指向的对象仍需额外同步。",
+      "options": ["正确", "错误"],
+      "ans": [0],
+      "exp": "正确。控制块的计数增减是原子操作，但所指对象本身没有任何保护，需要用户自己加锁。"
+    }
+  ]
+}

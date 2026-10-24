@@ -1,0 +1,256 @@
+/* 首页 */
+
+/* 顶部数字条 */
+.strip {
+  display: flex;
+  align-items: flex-end;
+  padding: 20rpx 0 12rpx;
+}
+
+.strip .st {
+  flex: 1;
+  text-align: center;
+}
+
+.strip .st:first-child { text-align: left; }
+.strip .st:last-child { text-align: right; }
+
+.st-n {
+  font-size: 64rpx;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -1rpx;
+}
+
+.st-u {
+  font-size: 28rpx;
+  color: var(--ink-3);
+  margin-left: 2rpx;
+}
+
+.st-l {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  letter-spacing: 2rpx;
+  color: var(--ink-3);
+}
+
+.st-line {
+  width: 1rpx;
+  height: 52rpx;
+  background: var(--line);
+  margin: 0 0 14rpx;
+}
+
+/* 主卡：模拟考试 */
+.hero {
+  position: relative;
+  margin-top: 28rpx;
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 40rpx 44rpx 32rpx 48rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 4rpx rgba(27, 25, 23, 0.03), 0 20rpx 44rpx -28rpx rgba(27, 25, 23, 0.2);
+}
+
+.hero:active { transform: scale(0.994); }
+
+.hero-spine {
+  position: absolute;
+  left: 20rpx;
+  top: 0;
+  bottom: 0;
+  width: 4rpx;
+  background: var(--accent);
+  opacity: 0.9;
+}
+
+.hero-kicker {
+  font-size: 20rpx;
+  letter-spacing: 5rpx;
+  color: var(--accent);
+}
+
+.hero-t {
+  margin-top: 14rpx;
+  font-size: 62rpx;
+  line-height: 1.1;
+  letter-spacing: 2rpx;
+  color: var(--ink);
+}
+
+.hero-d {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--ink-3);
+}
+
+.hero-cta {
+  position: absolute;
+  right: 36rpx;
+  top: 84rpx;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  box-shadow: 0 10rpx 24rpx -10rpx rgba(217, 84, 43, 0.6);
+}
+
+.hero-bar {
+  margin-top: 36rpx;
+  height: 4rpx;
+  background: rgba(27, 25, 23, 0.07);
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.hero-bar > .hero-bar-in {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4rpx;
+}
+
+.hero-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14rpx;
+  font-size: 21rpx;
+  color: var(--ink-4);
+  letter-spacing: 1rpx;
+}
+
+/* 2×2 练习格 */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -7rpx;
+}
+
+.tile {
+  width: calc(50% - 14rpx);
+  margin: 0 7rpx 14rpx;
+  background: #fff;
+  border: 1rpx solid var(--line);
+  border-radius: 26rpx;
+  padding: 30rpx 30rpx 28rpx;
+}
+
+.tile:active { background: rgba(27, 25, 23, 0.02); }
+
+.tile-n {
+  font-size: 56rpx;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -1rpx;
+}
+
+.tile-l {
+  margin-top: 16rpx;
+  font-size: 27rpx;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.tile-d {
+  margin-top: 4rpx;
+  font-size: 21rpx;
+  color: var(--ink-3);
+}
+
+/* 分类行 */
+.cat {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 32rpx;
+  position: relative;
+}
+
+.cat + .cat::before {
+  content: '';
+  position: absolute;
+  left: 32rpx;
+  right: 32rpx;
+  top: 0;
+  height: 1rpx;
+  background: var(--line-2);
+}
+
+.cat:active { background: rgba(27, 25, 23, 0.025); }
+
+.cat-b { flex: 1; min-width: 0; padding-right: 24rpx; }
+
+.cat-n {
+  font-size: 29rpx;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.cat-d {
+  margin: 6rpx 0 22rpx;
+  font-size: 21rpx;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-v {
+  font-size: 26rpx;
+  color: var(--ink-4);
+  letter-spacing: 0.5rpx;
+}
+
+.cat-v .cur { color: var(--ink); }
+
+/* 最近 */
+.rrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 32rpx;
+  position: relative;
+}
+
+.rrow + .rrow::before {
+  content: '';
+  position: absolute;
+  left: 32rpx;
+  right: 32rpx;
+  top: 0;
+  height: 1rpx;
+  background: var(--line-2);
+}
+
+.rr-l {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+}
+
+.rr-n {
+  font-size: 27rpx;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rr-t { font-size: 21rpx; color: var(--ink-4); margin-left: 14rpx; }
+.rr-a { font-size: 32rpx; }
+
+/* 页脚 */
+.foot {
+  text-align: center;
+  padding: 56rpx 0 24rpx;
+  font-size: 20rpx;
+  letter-spacing: 1rpx;
+  color: var(--ink-4);
+}
+
+.foot .dot { margin: 0 10rpx; }

@@ -1,0 +1,80 @@
+<view class="page">
+
+  <view class="nav" style="padding-top:{{statusBar}}px">
+    <view class="nav-back" bindtap="goBack">‹</view>
+    <view class="nav-title">导入</view>
+  </view>
+
+  <view class="head fade-up">
+    <view class="kicker">Import</view>
+    <view class="h1 serif">粘贴导入</view>
+    <view class="head-d">牛客、网页、Word 里的题，整段复制过来，自动切成可刷的题。</view>
+  </view>
+
+  <!-- 输入 -->
+  <view class="ta-card fade-up d1">
+    <textarea
+      class="ta"
+      value="{{text}}"
+      bindinput="onInput"
+      maxlength="-1"
+      fixed="{{true}}"
+      placeholder="在此粘贴，支持一次多题：&#10;&#10;1. 题干……&#10;A. 选项 A&#10;B. 选项 B&#10;C. 选项 C&#10;D. 选项 D&#10;答案：B&#10;解析：……"
+      placeholder-class="ph" />
+    <view class="ta-foot">
+      <text class="ta-op" bindtap="fillSample">填入示例</text>
+      <text class="ta-op dim" bindtap="clearText">清空</text>
+    </view>
+  </view>
+
+  <!-- 分类 -->
+  <view class="pick">
+    <text class="pick-k">归入分类</text>
+    <picker mode="selector" range="{{catNames}}" value="{{catIndex}}" bindchange="onCatChange">
+      <view class="pick-v">{{catNames[catIndex]}} <text class="pick-arw">▾</text></view>
+    </picker>
+  </view>
+
+  <button class="btn" bindtap="parse">解析预览</button>
+
+  <!-- 结果 -->
+  <block wx:if="{{result}}">
+    <view class="sec">
+      <text class="t">识 别 结 果</text>
+      <text class="s">{{result.converted}} 题可导入<text wx:if="{{result.skipped}}"> · 跳过 {{result.skipped}}</text></text>
+    </view>
+
+    <view class="pv" wx:for="{{previewList}}" wx:key="index">
+      <view class="pv-head">
+        <text class="pv-type">{{item.typeName}}</text>
+        <text class="pv-no">第 {{index + 1}} 题</text>
+      </view>
+      <view class="pv-q">{{item.q}}</view>
+      <view class="pv-opt" wx:for="{{item.options}}" wx:for-item="o" wx:key="k">
+        <text class="pv-k serif {{o.k === item.ansText ? 'ok-c' : ''}}">{{o.k}}</text>
+        <text class="pv-v">{{o.v}}</text>
+      </view>
+      <view class="pv-ans">正确答案 <text class="ok-c serif">{{item.ansText}}</text></view>
+    </view>
+
+    <view class="tip" wx:if="{{result.skipped > 0}}">
+      有 {{result.skipped}} 题没识别出来，多半是缺 A./B. 形式的选项，或者没有「答案：X」这一行。
+    </view>
+
+    <button class="btn" bindtap="doImport">导入 {{result.converted}} 题</button>
+  </block>
+
+  <!-- 写法说明 -->
+  <view class="sec"><text class="t">支 持 写 法</text></view>
+  <view class="fmt">
+    <view class="f"><text class="f-k">选项</text><text class="f-v">A. ｜ A、 ｜ A) ｜（A） ｜ A: 都行</text></view>
+    <view class="f"><text class="f-k">答案</text><text class="f-v">答案：B ｜【答案】A,B ｜ 正确答案：C</text></view>
+    <view class="f"><text class="f-k">多选</text><text class="f-v">写 A,B 或 A、B、D，自动判成多选</text></view>
+    <view class="f"><text class="f-k">判断</text><text class="f-v">选项是「正确 / 错误」时自动判成判断</text></view>
+    <view class="f"><text class="f-k">解析</text><text class="f-v">以「解析：」开头，可以没有</text></view>
+    <view class="f"><text class="f-k">题号</text><text class="f-v">1. ｜ 1、 ｜ 第 1 题，也可以不写</text></view>
+  </view>
+
+  <view class="pb"></view>
+
+</view>

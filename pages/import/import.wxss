@@ -1,0 +1,178 @@
+/* 导入页 */
+
+.head { padding: 24rpx 4rpx 0; }
+.head .h1 { margin-top: 16rpx; font-size: 60rpx; }
+
+.head-d {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: var(--ink-3);
+  max-width: 560rpx;
+}
+
+/* 输入卡：虚线纸卡 */
+.ta-card {
+  margin-top: 36rpx;
+  background: #fff;
+  border: 1rpx dashed rgba(27, 25, 23, 0.16);
+  border-radius: 26rpx;
+  padding: 26rpx 28rpx 18rpx;
+}
+
+.ta-card:focus-within { border-color: var(--accent); }
+
+.ta {
+  width: 100%;
+  height: 420rpx;
+  font-size: 27rpx;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.ph { color: var(--ink-4); font-size: 25rpx; line-height: 1.8; }
+
+.ta-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 14rpx;
+  border-top: 1rpx solid var(--line-2);
+}
+
+.ta-op {
+  font-size: 23rpx;
+  color: var(--accent);
+  padding: 6rpx 0 6rpx 28rpx;
+}
+
+.ta-op.dim { color: var(--ink-3); }
+
+/* 分类选择 */
+.pick {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 6rpx;
+}
+
+.pick-k { font-size: 26rpx; color: var(--ink-2); }
+
+.pick-v {
+  font-size: 27rpx;
+  color: var(--ink);
+}
+
+.pick-arw { font-size: 20rpx; color: var(--ink-3); margin-left: 6rpx; }
+
+/* 预览卡 */
+.pv {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin-bottom: 16rpx;
+  border: 1rpx solid var(--line);
+}
+
+.pv-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.pv-type {
+  font-size: 20rpx;
+  letter-spacing: 2rpx;
+  color: var(--ink-3);
+  padding: 2rpx 12rpx;
+  background: rgba(27, 25, 23, 0.05);
+  border-radius: 4rpx;
+}
+
+.pv-no { font-size: 21rpx; color: var(--ink-4); }
+
+.pv-q {
+  font-size: 27rpx;
+  line-height: 1.7;
+  color: var(--ink);
+  margin-bottom: 14rpx;
+}
+
+.pv-opt {
+  display: flex;
+  align-items: flex-start;
+  padding: 6rpx 0;
+}
+
+.pv-k {
+  width: 40rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: var(--ink-3);
+}
+
+.pv-v {
+  flex: 1;
+  font-size: 25rpx;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.pv-ans {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--line-2);
+  font-size: 23rpx;
+  color: var(--ink-3);
+}
+
+.pv-ans .ok-c { font-size: 26rpx; margin-left: 8rpx; letter-spacing: 1rpx; }
+
+.tip {
+  font-size: 23rpx;
+  line-height: 1.7;
+  color: var(--ink-3);
+  padding: 8rpx 6rpx 24rpx;
+}
+
+/* 写法说明 */
+.fmt {
+  background: #fff;
+  border-radius: 26rpx;
+  border: 1rpx solid var(--line);
+  overflow: hidden;
+}
+
+.f {
+  display: flex;
+  align-items: baseline;
+  padding: 24rpx 28rpx;
+  position: relative;
+}
+
+.f + .f::before {
+  content: '';
+  position: absolute;
+  left: 28rpx;
+  right: 28rpx;
+  top: 0;
+  height: 1rpx;
+  background: var(--line-2);
+}
+
+.f-k {
+  width: 100rpx;
+  flex-shrink: 0;
+  font-size: 23rpx;
+  color: var(--ink-3);
+  letter-spacing: 1rpx;
+}
+
+.f-v {
+  flex: 1;
+  font-size: 24rpx;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+.pb { height: 60rpx; }

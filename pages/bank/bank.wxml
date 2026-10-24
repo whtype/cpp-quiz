@@ -1,0 +1,96 @@
+<view class="page">
+
+  <view class="nav" style="padding-top:{{statusBar}}px">
+    <view class="nav-back" bindtap="goBack">‹</view>
+    <view class="nav-title">题库</view>
+  </view>
+
+  <view class="head fade-up">
+    <view class="kicker">Online Bank</view>
+    <view class="h1 serif">在线题库</view>
+    <view class="head-d">题不打包进小程序。用的时候才联网拉，拉下来存在本地，下次直接读。</view>
+  </view>
+
+  <!-- 数量概览 -->
+  <view class="sum fade-up d1">
+    <view class="sum-i">
+      <view class="sum-n serif">{{baseTotal}}</view>
+      <view class="sum-l">内置</view>
+    </view>
+    <view class="sum-line"></view>
+    <view class="sum-i">
+      <view class="sum-n serif accent">{{onlineNum}}</view>
+      <view class="sum-l">在线</view>
+    </view>
+    <view class="sum-line"></view>
+    <view class="sum-i">
+      <view class="sum-n serif">{{total}}</view>
+      <view class="sum-l">合计</view>
+    </view>
+  </view>
+
+  <!-- 源列表 -->
+  <view class="sec">
+    <text class="t">来 源</text>
+    <text class="s">已启用 {{enabledNum}} 个</text>
+  </view>
+
+  <view class="list">
+    <view class="src" wx:for="{{srcs}}" wx:key="id">
+      <view class="src-top">
+        <view class="src-b">
+          <view class="src-n">
+            <text>{{item.name}}</text>
+            <text class="src-tag">{{item.tag}}</text>
+          </view>
+          <view class="src-d">{{item.desc}}</view>
+        </view>
+        <view class="tg {{item.enabled ? 'on' : ''}}" data-id="{{item.id}}" data-on="{{item.enabled}}" catchtap="onToggle">
+          <view class="tg-k"></view>
+        </view>
+      </view>
+      <view class="src-foot">
+        <text class="src-st">{{item.cached > 0 ? '已缓存 ' + item.cached + ' 题 · ' + item.time : '尚未加载'}}</text>
+        <text class="src-op" data-id="{{item.id}}" catchtap="refreshOne">单独刷新</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn {{running ? 'btn-plain' : ''}}" bindtap="refreshAll">
+    {{running ? '加载中…' : '刷新已启用题库'}}
+  </button>
+
+  <view class="log {{logTone}}" wx:if="{{log}}">{{log}}</view>
+
+  <!-- 其它入口 -->
+  <view class="sec"><text class="t">其 它</text></view>
+  <view class="list">
+    <view class="row" bindtap="addCustom">
+      <view class="rt">
+        <view class="rn">自定义题库链接</view>
+        <view class="rd">JSON / Markdown / 开放接口都行</view>
+      </view>
+      <view class="rarw">›</view>
+    </view>
+    <view class="row" bindtap="goImport">
+      <view class="rt">
+        <view class="rn">粘贴导入</view>
+        <view class="rd">牛客、网页、文档里的题，复制过来就能刷</view>
+      </view>
+      <view class="rarw">›</view>
+    </view>
+    <view class="row" bindtap="clearOnline">
+      <view class="rt">
+        <view class="rn err-c">清空在线题目</view>
+        <view class="rd">回到只有内置 {{baseTotal}} 题的状态</view>
+      </view>
+      <view class="rarw">›</view>
+    </view>
+  </view>
+
+  <view class="note">
+    内置题随包发布（{{baseTotal}} 题）；在线题靠网络加载，缓存后离线也能刷。
+    真机上线前，请在小程序后台把 cdn.jsdelivr.net 等域名加入 request 合法域名，或填好云开发环境 ID 走云函数代理。
+  </view>
+
+</view>

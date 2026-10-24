@@ -1,0 +1,7 @@
+{
+  "name": "fetchBank",
+  "version": "1.0.0",
+  "description": "题库抓取代理云函数（绕过小程序 request 域名白名单）",
+  "main": "index.js",
+  "dependencies": {}
+}
