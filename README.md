@@ -317,7 +317,7 @@ node check.js
 | 文件结构 | app.json 里每个页面是否四件套齐全、启动页是否存在 |
 | JS 语法 | 全量 `new vm.Script` 编译 |
 | WXML | 是否用了 `<div>/<span>/<b>` 之类小程序不支持的标签；`class` 是否都有对应样式（避免元素裸奔） |
-| 题库 | id 唯一、答案下标合法、判断题 2 选项、解析非空 |
+| 题库 | id 唯一、答案下标合法、判断题 2 选项、解析非空、**选项不能只有字母/序号** |
 | **id 索引** | 不调 `setExtra` 也能按 id 查题（v2.5 那个 bug 的守卫） |
 | **错题/收藏链路** | 模拟答错两题+收藏一题，确认能取回题目；再塞一个假 id，确认会被自动清理 |
 | 导航栏 | `.nav` 是否是 `content-box`（v2.4 那个 bug 的守卫） |
@@ -342,3 +342,16 @@ node tools/test-resume.js
 | 首页浮层 | 点练习先弹选题数；能选中 50；跳转 URL 带上 `count` |
 
 这两条命令建议**上传前都跑一遍**。
+
+### 手机端截图验收
+
+`preview.html` 是和朋友手机上看的是同一个页面，改完界面对着手机尺寸看一眼：
+
+```bash
+node tools/shot-mobile.js --url https://whtype.github.io/cpp-quiz/ --out shot.png
+node tools/shot-mobile.js --url "…preview.html?still=1&pick=seq" --w 390 --h 844
+```
+
+> 注意别用 `chrome --window-size=390,844` 直接截——Chrome 的窗口有最小宽度（约 500px），
+> 截出来其实是 512 的视口被裁掉右边，看着像"页面在手机上溢出了"，白改一通。
+> 这个脚本走 DevTools 协议的 `Emulation.setDeviceMetricsOverride`，才是真 390 视口。
