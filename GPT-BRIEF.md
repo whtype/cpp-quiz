@@ -15,7 +15,7 @@
 
 ## 一、这是什么
 
-C++ 刷题微信小程序，题库 600 题（中文，每题带「为什么」式解析），支持语法 / 算法 / 面试三个分类、
+C++ 刷题微信小程序，题库 750 题（中文，每题带「为什么」式解析），支持语法 / 算法 / 面试三个分类、
 模拟考试、错题本、收藏、书架（12 本 C++ 书）、在线题库运行时加载、粘贴导入。
 
 - **技术栈**：微信小程序原生（无框架、无构建工具、无 npm 依赖）
@@ -31,7 +31,8 @@ C++ 刷题微信小程序，题库 600 题（中文，每题带「为什么」�
 ```
 app.js / app.json / app.wxss      全局入口、路由表、设计系统（CSS 变量都在 app.wxss 顶部）
 pages/
-  index/        首页：统计、考试入口、练习方式、分类进度、选题数浮层
+  index/        首页：一句话标题、今日练习卡（开始/继续）、三项统计、错题/收藏、选题数浮层
+  learn/        按章节练习：选章节 + 选难度（基础/进阶/全部），得出题数后开刷
   practice/     答题页：题干/选项/即时判卷/解析/答题卡/限时/续做/跳过
   result/       结果页：百分制 + 逐题解析
   wrong/        错题本 + 收藏（下划线 Tab）
@@ -40,19 +41,31 @@ pages/
   import/       粘贴导入：把牛客/网页题目转成结构化
 data/
   questions.js  题库装配（CORE 数组 + 引用 bank 分片 + 运行时在线题）
-  bank/p1..p6.js  扩充题库，每片 50 题
+  bank/
+    p1..p6.js                基础题库，每片 50 题
+    algorithm-interview.js   算法面试（新增）
+    systems-interview.js     系统/底层面试（新增）
+    modern-interview.js      现代 C++ 面试（新增）
+    index.js                 分片汇总
   books.js      书架数据
 utils/
   adapter.js    多格式适配 + 纯文本解析 + 题干 hash 生成稳定 id
   sources.js    在线源清单与加载管线
+  learning.js   章节/难度筛选、每日一练选卷（新增）
   store.js      本地存储：记录/错题/收藏/进度/偏好
   ui.js         状态栏高度、返回兜底、toast
-check.js        静态自检（19 项），改完必须跑
+web 运行时（只在浏览器版生效，小程序不加载）：
+  web-runtime.js / web-storage.js / preview-learning.js / preview-learning.css
+check.js        静态自检（22 项），改完必须跑
 tools/
-  test-resume.js    行为回归（16 项）
+  test-resume.js    续做/题数/跳过 回归（16 项）
+  test-interview.js 章节、导入、错题隔离等回归（26 项）
+  test-web.js       浏览器版端到端（判分/收藏/续做/交卷/导入）
+  audit-bank.js     题库结构审计（分布、重复、代码题占比）
   shot-mobile.js    真机尺寸截图（DevTools 协议）
   md2qa.js / bank-build.js  题库生产流水线
 preview.html    浏览器版界面（GitHub Pages 线上就是它），和小程序端是两套独立实现
+docs/           设计稿与手机截图（打包时忽略）
 ```
 
 ---
@@ -89,11 +102,21 @@ preview.html    浏览器版界面（GitHub Pages 线上就是它），和小程
 不能只写 `['A','B','C','D']` 而把内容塞进 `code`——页面上会渲染成「A A」。
 `check.js` 已经加了这条守卫，违反会报错。
 
-### 6. 改完必须跑这两条
+### 6. 配置文件必须是合法 JSON
+
+`project.config.json` 里任何一个多余逗号都会让开发者工具**读不了项目配置**（项目打不开、上传不了），
+而此刻所有 JS 检查仍会全绿。上一版就踩过：4 条忽略项被误塞进 `setting.babelSetting.ignore`
+并在数组末尾留下 `},]`，整个文件失效。
+
+`check.js` 的 `[9] JSON 配置` 会全量校验，别绕过它。
+
+### 7. 改完必须跑这几条
 
 ```bash
-node check.js            # 19 项静态检查，退出码非 0 即失败
-node tools/test-resume.js # 16 项行为断言（续做/题数/跳过/浮层）
+node check.js                 # 22 项静态检查，退出码非 0 即失败
+node tools/test-resume.js     # 16 项：续做 / 题数 / 跳过 / 浮层
+node tools/test-interview.js  # 26 项：章节筛选、导入、错题隔离
+node tools/test-web.js        # 浏览器版端到端
 ```
 
 `check.js` 会查：页面四件套是否齐全、全量 JS 语法、WXML 非法标签、
@@ -109,7 +132,7 @@ node tools/test-resume.js # 16 项行为断言（续做/题数/跳过/浮层）
 | 未作答可以跳过 | 底栏按钮未答时显示「跳过」，答了显示「下一题」。**别再改回「请先作答」拦截** |
 | 退出能续做 | 进度存 `cpp_quiz_progress_v1`，只存题目 id 列表不存题面；`resumable()` 判据是 `0 < idx < len-1`（答到最后一题就不该再续） |
 | 交卷清进度 | `finish()` 里会 `clearProgress()`，否则下次还问"要不要继续一轮做完的" |
-| 题库不打包 | 开源题运行时从 CDN 拉（jsDelivr），包体只有 600 道中文题。别把在线题写回 `data/` |
+| 题库不打包 | 开源题运行时从 CDN 拉（jsDelivr），包体只有 750 道中文题。别把在线题写回 `data/` |
 
 ---
 

@@ -8,7 +8,7 @@ var CLOUD_ENV = ''
 
 App({
   globalData: {
-    version: '2.6.0',
+    version: '2.7.0',
     cloudEnv: CLOUD_ENV,
     cloudReady: false,
     booting: false,
@@ -33,7 +33,7 @@ App({
     }
 
     // 3. 首次启动（没有任何在线题缓存）→ 后台静默拉一次开源题
-    //    失败了也不打扰用户，内置 600 题照样能刷
+    //    失败了也不打扰用户，内置 750 题照样能刷
     var that = this
     this.globalData.booting = true
     setTimeout(function () {
