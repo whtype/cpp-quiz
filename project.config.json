@@ -23,8 +23,12 @@
         "type": "file"
       },
       {
-        "type": "file",
-        "value": "BANK-PLAN.md"
+        "value": "BANK-PLAN.md",
+        "type": "file"
+      },
+      {
+        "value": "GPT-BRIEF.md",
+        "type": "file"
       },
       {
         "type": "folder",
