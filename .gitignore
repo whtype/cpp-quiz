@@ -13,3 +13,6 @@ $RECYCLE.BIN/
 # Node.js
 node_modules/
 .playwright-cli/
+
+# 验收截图（临时产物，不进仓库）
+docs/shots/
