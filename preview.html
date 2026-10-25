@@ -978,21 +978,26 @@ function doParse() {
 <script>
 /* 初始化 */
 var _hash = (location.hash || '').replace('#', '')
-/* 支持 #practice / #practice-algo / #practice-random-algo / #wrong / #fav，方便逐入口验收标题 */
-var _isPrac = _hash.indexOf('practice') === 0 || _hash === 'exam' || _hash === 'wrong' || _hash === 'fav' || _hash === 'random'
+/* 深链约定：
+   #practice / #practice-algo / #practice-wrong / #exam / #random  → 直接进答题
+   #wrong / #fav                                                  → 进错题本列表（对应 tab）
+   早先 #wrong 会直接跳到"重练"，于是打不开列表页，验收时看着像少了个页面 */
+var _isPrac = _hash.indexOf('practice') === 0 || _hash === 'exam' || _hash === 'random'
 if (_isPrac) {
   var _parts = _hash.split('-')
   var _m = 'seq'
   var _c = ''
-  if (_hash === 'wrong') _m = 'wrong'
-  else if (_hash === 'fav') _m = 'fav'
-  else if (_hash === 'random') _m = 'random'
+  if (_hash === 'random') _m = 'random'
   else if (_hash === 'exam') _m = 'exam'
   else if (_parts.length > 1) {
     if (MODE_LABEL[_parts[1]]) { _m = _parts[1]; _c = _parts[2] || '' }
     else { _c = _parts[1] }
   }
   startPractice(_m, _c)
+} else if (_hash === 'wrong' || _hash === 'fav') {
+  state.page = 'wrong'
+  state.tab = _hash
+  render()
 } else if (_hash.indexOf('books') === 0) {
   state.page = 'books'
   render()
