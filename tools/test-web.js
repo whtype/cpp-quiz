@@ -13,6 +13,7 @@ function boot(){
 }
 var b=boot();assert.ok(b.WebStore,'browser must use real storage');assert.strictEqual(b.MOCK_ANS,0)
 b.LEARN_FILTER={level:0,course:'arrays'};b.learnStart();var id=b.cur.list[0].id
+b.startPractice('wrong');assert.strictEqual(b.cur.list[0].id,id);assert.strictEqual(b.state.mode,'study')
 b.pick(b.cur.list[0].ans[0]);b.pick(b.cur.list[0].ans[0]);assert.strictEqual(b.WebStore.getStats().answered,1)
 b.toggleFav();assert.ok(b.WebStore.isFav(id));b.next()
 var restored=boot();assert.strictEqual(restored.cur.idx,1);assert.strictEqual(restored.cur.studyCourse,'arrays');assert.ok(restored.cur.answers[id].answered);assert.ok(restored.WebStore.isFav(id))
@@ -26,4 +27,3 @@ var imported={id:'web-test',cat:'syntax',level:1,type:'single',q:'测试导入',
 last.PARSE_LIST=[imported];last.importWeb();assert.ok(last.quiz.getById('web-test'));assert.ok(boot().quiz.getById('web-test'))
 last.PARSE_LIST=[imported];last.importWeb();assert.strictEqual(last.quiz.getExtra().length,1)
 console.log('PASS web: real scoring, idempotent answers, favorites, refresh resume, skipped wrong items, results, chapter repeat, persistent import')
-
