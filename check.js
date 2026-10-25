@@ -195,6 +195,41 @@ if (!/content-box/.test(navBlock)) {
 if (!/nav-back/.test(wxss)) bad('找不到 .nav-back 样式')
 else ok('.nav-back 存在')
 
+/* ---------------- 9. JSON 配置合法性 ---------------- */
+title('[9] JSON 配置')
+
+/* 真事：project.config.json 曾被塞进一个多余的逗号（`},]`）变成非法 JSON，
+   开发者工具直接读不了项目配置，但所有 JS 检查照样全绿 —— 静态检查必须覆盖配置文件。 */
+function walkJson(dir, out) {
+  fs.readdirSync(dir).forEach(function (name) {
+    if (name === 'node_modules' || name === '.git') return
+    var full = path.join(dir, name)
+    var st = fs.statSync(full)
+    if (st.isDirectory()) walkJson(full, out)
+    else if (/\.json$/.test(name)) out.push(full)
+  })
+  return out
+}
+
+var jsonFiles = walkJson(ROOT, [])
+var jsonBad = 0
+jsonFiles.forEach(function (f) {
+  try {
+    JSON.parse(fs.readFileSync(f, 'utf8'))
+  } catch (e) {
+    jsonBad++
+    bad(path.relative(ROOT, f) + ' 不是合法 JSON：' + e.message.split('\n')[0])
+  }
+})
+if (!jsonBad) ok(jsonFiles.length + ' 个 json 全部合法')
+
+/* 项目配置的关键字段得能读出来，否则工具里"项目打不开" */
+var proj = null
+try { proj = JSON.parse(fs.readFileSync(path.join(ROOT, 'project.config.json'), 'utf8')) } catch (e) {}
+if (!proj) bad('project.config.json 读不出来')
+else if (!proj.appid) bad('project.config.json 缺 appid')
+else ok('appid ' + proj.appid + '，打包忽略 ' + ((proj.packOptions && proj.packOptions.ignore) || []).length + ' 条')
+
 /* ---------------- 汇总 ---------------- */
 console.log('\n' + '-'.repeat(46))
 if (notes.length) console.log(notes.join('\n'))

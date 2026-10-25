@@ -73,11 +73,7 @@
     "useApiHook": true,
     "useApiHostProcess": true,
     "babelSetting": {
-      "ignore": [
-      { "value": "web-runtime.js", "type": "file" },
-      { "value": "web-storage.js", "type": "file" },
-      { "value": "chapters-preview.png", "type": "file" },
-      { "value": ".nojekyll", "type": "file" },],
+      "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
     },
