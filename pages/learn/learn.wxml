@@ -1,0 +1,15 @@
+<view class="page learn">
+  <view class="nav" style="padding-top:{{statusBar}}px"><view class="nav-back" bindtap="goBack">‹</view><view class="nav-title">C++ 刷题</view></view>
+  <view class="learn-title serif">想练哪章，就选哪章。</view>
+  <view class="learn-intro">可以专项练习，也可以选全部章节从基础开始。</view>
+  <view class="course-label">练习章节</view>
+  <picker range="{{courses}}" range-key="label" value="{{courseIndex}}" bindchange="chooseCourse"><view class="course-picker"><text>{{courses[courseIndex].label}}</text><text>⌄</text></view></picker>
+  <view class="course-label">难度</view>
+  <view class="simple-choices">
+    <view wx:for="{{choices}}" wx:key="key" class="simple-choice {{level === item.key ? 'selected' : ''}}" data-value="{{item.key}}" bindtap="choose"><view class="choice-name">{{item.name}}</view><view class="choice-desc">{{item.desc}}</view><text class="choice-check">{{level === item.key ? '✓' : ''}}</text></view>
+  </view>
+  <view class="simple-progress">{{matched ? '共 ' + matched + ' 题 · 已练 ' + done + ' 题' : '该章节暂无这个难度的题目，请切换为全部难度。'}}</view>
+  <button class="btn" disabled="{{!matched}}" bindtap="start">{{canResume ? '继续上次 · 第 ' + resumeIdx + ' 题' : '开始刷题'}}</button>
+  <view class="simple-hint">每轮最多 20 题，优先未练题；退出后可以接着做。</view>
+  <view class="simple-review" bindtap="goWrong">复习错题 →</view>
+</view>

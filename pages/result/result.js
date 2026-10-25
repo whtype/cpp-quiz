@@ -1,6 +1,7 @@
 var Q = require('../../data/questions')
 var store = require('../../utils/store')
 var ui = require('../../utils/ui')
+var L = require('../../utils/learning')
 
 var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
@@ -94,7 +95,7 @@ Page({
   again: function () {
     var s = this.data.session
     wx.redirectTo({
-      url: '/pages/practice/practice?mode=' + (s.mode || 'seq') + '&cat=' + (s.cat || '')
+      url: '/pages/practice/practice?mode=' + (s.mode || 'seq') + '&cat=' + (s.cat || '') + '&count=' + (s.count || 0) + '&restart=1' + L.query(s)
     })
   },
 

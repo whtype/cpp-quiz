@@ -1,4 +1,9 @@
 /* 答题页 */
+.question-origin { margin: 16rpx 0 24rpx; color: var(--ink-2); font-size: 22rpx; line-height: 1.7; }
+.followup { margin-top: 28rpx; padding-top: 24rpx; border-top: 1rpx solid var(--line); }
+.followup-title { color: var(--accent-2); font-size: 26rpx; font-weight: 600; margin-bottom: 12rpx; }
+.reference-link { margin-top: 24rpx; padding: 18rpx 0; color: var(--accent-2); font-size: 24rpx; overflow-wrap: anywhere; }
+.reference-hint { font-size: 21rpx; color: var(--ink-2); margin-top: 6rpx; }
 
 .page.pr { padding-bottom: calc(200rpx + env(safe-area-inset-bottom)); }
 

@@ -1,0 +1,14 @@
+.learn { padding-bottom: calc(40rpx + env(safe-area-inset-bottom)); }
+.learn-title { font-size: 46rpx; font-weight: 600; margin: 42rpx 0 16rpx; line-height: 1.4; }
+.learn-intro { font-size: 27rpx; color: var(--ink-2); line-height: 1.8; }
+.course-label { font-size: 25rpx; color: var(--ink-2); margin: 28rpx 0 14rpx; }
+.course-picker { display: flex; justify-content: space-between; padding: 24rpx 28rpx; background: white; border: 2rpx solid var(--line); border-radius: 16rpx; font-size: 29rpx; }
+.simple-choices { margin: 0 0 28rpx; }
+.simple-choice { position: relative; padding: 28rpx 72rpx 28rpx 28rpx; background: white; border: 2rpx solid var(--line); border-radius: 20rpx; margin-bottom: 16rpx; }
+.simple-choice.selected { background: var(--accent-soft); border-color: var(--accent); }
+.choice-name { font-size: 31rpx; font-weight: 600; }
+.choice-desc { font-size: 25rpx; color: var(--ink-2); margin-top: 8rpx; line-height: 1.7; }
+.choice-check { position: absolute; right: 28rpx; top: 32rpx; color: var(--accent); font-size: 30rpx; }
+.simple-progress { font-size: 24rpx; color: var(--ink-2); margin-bottom: 22rpx; }
+.simple-hint { font-size: 23rpx; color: var(--ink-2); text-align: center; margin: 20rpx 0; }
+.simple-review { text-align: center; font-size: 27rpx; color: var(--accent); padding: 26rpx; }

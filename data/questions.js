@@ -9,8 +9,8 @@
 const CATEGORIES = [
   { key: 'syntax', name: 'C++ 语法基础', desc: '指针引用、内存、STL、面向对象、模板与新特性', icon: '⌘' },
   { key: 'algo', name: '算法与数据结构', desc: '复杂度、排序查找、树图、动态规划', icon: '∑' },
-  { key: 'interview', name: '面试真题', desc: '高频考点、经典陷阱题与易错题', icon: '★' },
-  { key: 'modern', name: 'C++ 新特性', desc: '在线题库 · C++11/14/17/20 特性题，用时才加载', icon: '⌗' }
+  { key: 'interview', name: '面试核心', desc: '系统、并发、网络与工程场景练习', icon: '★' },
+  { key: 'modern', name: '现代 C++', desc: 'C++11/14/17/20 · 生命周期、类型与泛型', icon: '⌗' }
 ]
 
 const CORE = [
@@ -565,10 +565,10 @@ const CORE = [
   },
   {
     id: 'i18', cat: 'interview', type: 'judge', level: 2,
-    q: 'A* p = nullptr; p->f(); 若 f 是非虚成员函数且不访问任何成员变量，这段代码通常能正常运行；若 f 访问成员变量或为虚函数，则会崩溃。',
+    q: 'A* p = nullptr; p->f(); 若 f 是非静态成员函数，即使函数体不访问成员，这种调用仍是未定义行为，不能根据某次运行结果判断其合法性。',
     options: ['正确', '错误'],
     ans: [0],
-    exp: '正确（但仍是未定义行为，不应依赖）。非虚成员函数调用是静态绑定，不需要读对象内存，this 为 nullptr 也能进入；访问成员（解引用 this）或调用虚函数（需读 vptr）就会段错误。'
+    exp: '正确。通过空指针调用非静态成员函数不满足对象要求，是未定义行为。可能看似成功、崩溃或出现其他结果，标准不保证一定段错误。静态成员函数不依赖对象，是不同情形。'
   },
   {
     id: 'i19', cat: 'interview', type: 'judge', level: 2,
@@ -942,7 +942,7 @@ const CORE = [
       '可以直接修改 set 中已有元素的值'
     ],
     ans: [0, 1, 2],
-    exp: 'set 的迭代器是 const 的，不能原地修改元素（会破坏有序性），正确做法是先 erase 再 insert。C++11 起 extract + 修改 + insert 是更高效的方式。'
+    exp: 'set 的元素不能通过普通迭代器修改，因为会破坏有序性；可以先 erase 再 insert。C++17 起还可 extract 取得节点句柄，在脱离容器后修改值，再 insert，并处理键冲突。extract 不是 C++11 特性。'
   },
   {
     id: 's54', cat: 'syntax', type: 'judge', level: 2,
@@ -2970,7 +2970,15 @@ function rebuild() {
 
 /** 设置在线导入的题库，传入空数组即恢复内置题库 */
 function setExtra(list) {
-  EXTRA = (list && list.length) ? list : []
+  var seen = Object.create(null)
+  BASE.forEach(function(q) { seen[q.id] = true })
+  EXTRA = (Array.isArray(list) ? list : []).filter(function(q) {
+    if (!q || !q.id || seen[q.id]) return false
+    if (!Array.isArray(q.options) || !Array.isArray(q.ans) || !q.ans.length) return false
+    if (!q.ans.every(function(n,i) { return Number.isInteger(n) && n >= 0 && n < q.options.length && q.ans.indexOf(n) === i })) return false
+    seen[q.id] = true
+    return true
+  })
   rebuild()
   return QUESTIONS.length
 }

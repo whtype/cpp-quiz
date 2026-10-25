@@ -6,7 +6,8 @@
     "pages/wrong/wrong",
     "pages/import/import",
     "pages/bank/bank",
-    "pages/books/books"
+    "pages/books/books",
+    "pages/learn/learn"
   ],
   "window": {
     "backgroundTextStyle": "dark",

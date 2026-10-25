@@ -30,6 +30,7 @@
 
     <!-- 题干 -->
     <view class="qtext">{{cur.q}}</view>
+    <view class="question-origin">{{topicLabels}} · {{sourceLabel}}</view>
     <view class="code" wx:if="{{cur.code}}">{{cur.code}}</view>
 
     <!-- 选项 -->
@@ -58,6 +59,8 @@
       <view class="exp-you" wx:if="{{!isRight}}">你选的是 {{pickedText}}</view>
       <view class="exp-line"></view>
       <view class="exp-t">{{cur.exp}}</view>
+      <view class="followup" wx:if="{{cur.followUp}}"><view class="followup-title" bindtap="toggleFollowUp">延伸理解（选看）{{followUpOpen ? ' −' : ' ＋'}}</view><view class="exp-t" wx:if="{{followUpOpen}}">{{cur.followUp}}</view></view>
+      <view class="reference-link" wx:if="{{cur.reference}}" bindtap="copyReference">参考资料 · {{cur.reference.title}} ↗<view class="reference-hint">点击复制链接，在浏览器阅读</view></view>
     </view>
 
     <view class="pb"></view>

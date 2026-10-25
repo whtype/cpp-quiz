@@ -73,7 +73,7 @@
 
 .hero-t {
   margin-top: 14rpx;
-  font-size: 62rpx;
+  font-size: 38rpx;
   line-height: 1.1;
   letter-spacing: 2rpx;
   color: var(--ink);
@@ -88,9 +88,9 @@
 .hero-cta {
   position: absolute;
   right: 36rpx;
-  top: 84rpx;
-  width: 88rpx;
-  height: 88rpx;
+  top: 34rpx;
+  width: 54rpx;
+  height: 54rpx;
   border-radius: 50%;
   background: var(--accent);
   color: #fff;
@@ -270,3 +270,16 @@
 }
 
 .foot .dot { margin: 0 10rpx; }
+
+.campus-intro { padding: 32rpx 0 28rpx; }
+.campus-kicker { font-size: 20rpx; letter-spacing: 3rpx; color: var(--accent); }
+.campus-title { font-size: 50rpx; line-height: 1.4; margin-top: 12rpx; font-weight: 600; }
+.simple-home-card { margin-top: 0; padding: 34rpx 32rpx 26rpx; box-shadow: none; border: 1rpx solid var(--line); }
+.simple-home-card .hero-t { margin-top: 0; font-size: 40rpx; }
+.daily-button { margin-top: 30rpx; }
+.difficulty-link { padding: 22rpx 0 0; text-align: center; color: var(--ink-2); font-size: 24rpx; }
+.simple-tools { display: flex; justify-content: space-around; padding: 28rpx 0; font-size: 26rpx; color: var(--ink-2); }
+.campus-desc { font-size: 24rpx; color: var(--ink-2); margin-top: 14rpx; }
+.exam-entry { display: flex; justify-content: space-between; align-items: center; margin-top: 16rpx; padding: 26rpx 30rpx; border: 1rpx solid var(--line); border-radius: 22rpx; }
+.exam-title { font-size: 27rpx; font-weight: 500; }
+.exam-desc { font-size: 23rpx; color: var(--ink-2); margin-top: 4rpx; }

@@ -11,7 +11,10 @@ var LIST = [].concat(
   require('./p3.js'),
   require('./p4.js'),
   require('./p5.js'),
-  require('./p6.js')
+  require('./p6.js'),
+  require('./modern-interview.js'),
+  require('./systems-interview.js'),
+  require('./algorithm-interview.js')
 )
 
 if (typeof module !== 'undefined' && module.exports) module.exports = LIST

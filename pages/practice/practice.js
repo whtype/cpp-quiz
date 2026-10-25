@@ -1,12 +1,14 @@
 var Q = require('../../data/questions')
 var store = require('../../utils/store')
 var ui = require('../../utils/ui')
+var L = require('../../utils/learning')
 
 var LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 var EXAM_LIMIT = 20 * 60   // 模拟考试限时 20 分钟
 var EXAM_COUNT = 20
 
 var MODE_NAME = {
+  study: 'C++ 刷题',
   seq: '顺序练习',
   random: '随机练习',
   exam: '模拟考试',
@@ -69,6 +71,7 @@ Page({
     percent: 0,
     mode: 'seq',
     cat: '',
+    level: 0, course: '', track: '', topic: '', search: '',
     modeName: '顺序练习',
     catName: '',
     typeName: '',
@@ -106,17 +109,20 @@ Page({
     ui.attach(this)
     var mode = options.mode || 'seq'
     var cat = options.cat || ''
-    var count = parseInt(options.count || 0, 10) || 0
+    var count = options.count === undefined ? (mode === 'random' ? 20 : 0) : Math.max(0, parseInt(options.count, 10) || 0)
+    var filters = L.filters(options)
+    this.finished = false
+    this.setData(filters)
     var forceNew = options.restart === '1'
     var isExam = mode === 'exam'
 
-    var title = buildTitle(mode, cat)
+    var title = mode === 'study' && filters.course ? L.courseLabel(filters.course) + ' · 练习' : buildTitle(mode, cat)
     wx.setNavigationBarTitle({ title: title })
 
     /* 先看有没有能接着做的：同一个模式 + 同一个分类，且上次没答到最后一题 */
     var prog = store.getProgress()
     var canResume = !forceNew && !isExam && store.resumable(prog) &&
-      prog.mode === mode && (prog.cat || '') === cat
+      prog.mode === mode && (prog.cat || '') === cat && L.key(prog) === L.key(filters)
 
     var list, fromIdx = 0, answers = {}, elapsed = 0, resumed = false
 
@@ -128,7 +134,7 @@ Page({
         answers = prog.answers || {}
         elapsed = prog.elapsed || 0
         // 题数沿用上次的快照，否则点「重新开始」会变成全量
-        count = prog.count || count
+        count = typeof prog.count === 'number' ? prog.count : count
         resumed = true
       } else {
         // 题目本身失效了（在线题库换源），别硬撑，从头来
@@ -141,12 +147,10 @@ Page({
 
     if (!list.length) {
       var tip = '暂无可练习的题目'
-      if (mode === 'wrong') {
-        store.prune('wrong', [])
-        tip = '错题已失效，已清理'
-      } else if (mode === 'fav') {
-        store.prune('fav', [])
-        tip = '收藏已失效，已清理'
+      if (mode === 'wrong' && !store.getWrongIds().length) {
+        tip = '错题本暂无有效题目'
+      } else if (mode === 'fav' && !store.getFavIds().length) {
+        tip = '收藏暂无有效题目'
       }
       wx.showToast({ title: tip, icon: 'none' })
       setTimeout(function () { ui.back() }, 1200)
@@ -172,10 +176,22 @@ Page({
     })
 
     this.render()
+    this.clockStart = Date.now() - elapsed * 1000
     this.startTimer()
   },
 
+  onShow: function () {
+    if (this.finished || !this.data.total) return
+    if (!this.data.isExam && this.hiddenAt) this.clockStart += Date.now() - this.hiddenAt
+    this.hiddenAt = 0
+    this.updateClock()
+    if (!this.finished && !this.timer) this.startTimer()
+  },
+
   onHide: function () {
+    this.updateClock()
+    this.hiddenAt = Date.now()
+    if (this.timer) { clearInterval(this.timer); this.timer = null }
     this.persist()
   },
 
@@ -195,6 +211,7 @@ Page({
     store.saveProgress({
       mode: this.data.mode,
       cat: this.data.cat,
+      level: this.data.level, course: this.data.course, track: this.data.track, topic: this.data.topic, search: this.data.search,
       count: this.data.count,
       idx: this.data.idx,
       elapsed: this.data.elapsed,
@@ -206,17 +223,24 @@ Page({
 
   /* 顶部提示条上的「重来」 */
   restart: function () {
+    this.finished = true
     store.clearProgress()
     var url = '/pages/practice/practice?mode=' + this.data.mode +
-      '&cat=' + this.data.cat + '&count=' + this.data.count + '&restart=1'
+      '&cat=' + this.data.cat + '&count=' + this.data.count + '&restart=1' + L.query(this.data)
     wx.redirectTo({ url: url })
   },
 
   buildList: function (mode, cat, count) {
     var n = count > 0 ? count : 0
-    var pool = Q.filterByCat(cat)
-    if (mode === 'random') return shuffle(pool).slice(0, n || 20)
-    if (mode === 'exam') return shuffle(Q.QUESTIONS).slice(0, EXAM_COUNT)
+    var pool = L.select(Q.filterByCat(cat), this.data)
+    if (mode === 'study') {
+      var records = store.getStats().records
+      var fresh = pool.filter(function(q) { return !records[q.id] || !records[q.id].t })
+      var seen = pool.filter(function(q) { return records[q.id] && records[q.id].t })
+      pool = fresh.concat(seen)
+    }
+    if (mode === 'random') return shuffle(pool).slice(0, n || pool.length)
+    if (mode === 'exam') return L.exam(pool, EXAM_COUNT)
     if (mode === 'wrong' || mode === 'fav') {
       var kind = mode === 'wrong' ? 'wrong' : 'fav'
       var ids = kind === 'wrong' ? store.getWrongIds() : store.getFavIds()
@@ -225,6 +249,7 @@ Page({
       if (qs.length !== ids.length) {
         store.prune(kind, qs.map(function (q) { return q.id }))
       }
+      qs = L.select(qs, this.data)
       return n ? qs.slice(0, n) : qs
     }
     return n ? pool.slice(0, n) : pool
@@ -232,17 +257,19 @@ Page({
 
   startTimer: function () {
     var that = this
-    this.timer = setInterval(function () {
-      var el = that.data.elapsed + 1
-      var txt = that.data.isExam
-        ? fmtTime(Math.max(EXAM_LIMIT - el, 0))
-        : fmtTime(el)
-      that.setData({ elapsed: el, timeText: txt })
-      if (that.data.isExam && el >= EXAM_LIMIT) {
-        wx.showToast({ title: '时间到，自动交卷', icon: 'none' })
-        that.finish(true)
-      }
-    }, 1000)
+    if (this.timer) clearInterval(this.timer)
+    this.timer = setInterval(function () { that.updateClock() }, 1000)
+  },
+
+  updateClock: function () {
+    if (this.finished || this.clockStart === undefined) return
+    var el = Math.max(0, Math.floor((Date.now() - this.clockStart) / 1000))
+    if (this.data.isExam) el = Math.min(el, EXAM_LIMIT)
+    this.setData({elapsed:el,timeText:fmtTime(this.data.isExam ? EXAM_LIMIT - el : el)})
+    if (this.data.isExam && el >= EXAM_LIMIT) {
+      wx.showToast({title:'时间到，自动交卷',icon:'none'})
+      this.finish(true)
+    }
   },
 
   /* 渲染当前题目 */
@@ -282,6 +309,9 @@ Page({
 
     this.setData({
       cur: cur,
+      followUpOpen: false,
+      sourceLabel: L.describe(cur).source,
+      topicLabels: this.data.course ? L.courseLabel(this.data.course) : L.describe(cur).labels.join(' / '),
       idx: idx,
       percent: list.length ? Math.round(((idx + 1) / list.length) * 100) : 0,
       catName: CAT_SHORT[cur.cat] || CAT_NAME[cur.cat] || '',
@@ -363,6 +393,7 @@ Page({
 
   /* 多选题确认作答 */
   doSubmit: function () {
+    if (this.finished || this.data.revealed) return
     var cur = this.data.cur
     var a = this.answers[cur.id] || { picked: [], answered: false, right: false }
     if (!a.picked.length) {
@@ -402,6 +433,15 @@ Page({
     wx.showToast({ title: on ? '已收藏' : '已取消收藏', icon: 'none' })
   },
 
+  copyReference: function () {
+    var ref = this.data.cur.reference
+    if (ref && /^https:\/\//.test(ref.url)) wx.setClipboardData({data:ref.url})
+  },
+
+  toggleFollowUp: function () {
+    this.setData({followUpOpen: !this.data.followUpOpen})
+  },
+
   toggleCard: function () {
     this.setData({ cardOpen: !this.data.cardOpen })
   },
@@ -428,7 +468,7 @@ Page({
       var a = self.answers[q.id] || { picked: [], answered: false, right: false }
       var right = a.answered && a.right
       if (!a.answered) skipped += 1
-      if (!self.data.instant) {
+      if (!self.data.instant || !a.answered) {
         // 考试模式：此刻统一计入统计
         store.record(q.id, !!right)
       }
@@ -448,6 +488,8 @@ Page({
     var session = {
       mode: mode,
       cat: this.data.cat,
+      count: this.data.count,
+      level: this.data.level, course: this.data.course, track: this.data.track, topic: this.data.topic, search: this.data.search,
       modeName: this.data.modeName,
       total: list.length,
       correct: correct,

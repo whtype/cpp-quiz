@@ -37,7 +37,7 @@ function decodeEnt(s) {
     .replace(/&gt;/g, '>')
 }
 
-function pickLevel(v) {  if (typeof v === 'number' && v >= 1 && v <= 3) return v
+function pickLevel(v) {  if (typeof v === 'number' && Math.floor(v) === v && v >= 1 && v <= 3) return v
   if (typeof v === 'string') return LV[v.toLowerCase()] || 2
   return 2
 }
@@ -123,7 +123,7 @@ function convert(raw, seq) {
   if (!ans || !ans.length) return null
 
   // 答案可能是字符串下标
-  ans = ans.map(function (n) { return typeof n === 'string' ? parseInt(n, 10) : n })
+  ans = ans.map(function (n) { return typeof n === 'string' && /^\d+$/.test(n) ? Number(n) : n })
   var ins = 'r' + hashId(String(q) + '|' + options.join('|'))
   return finish(raw.id || ins, q, code, options, ans, exp, pickType(type, ans.length), level, cat)
 }
@@ -131,8 +131,11 @@ function convert(raw, seq) {
 function finish(id, q, code, options, ans, exp, type, level, cat) {
   if (!q || !String(q).trim()) return null
   if (!Array.isArray(options) || options.length < 2) return null
-  var valid = ans.every(function (n) {
-    return typeof n === 'number' && n >= 0 && n < options.length
+  if (!Array.isArray(ans) || !ans.length) return null
+  if ((type === 'single' || type === 'judge') && ans.length !== 1) return null
+  if (type === 'judge' && options.length !== 2) return null
+  var valid = ans.every(function (n, i) {
+    return typeof n === 'number' && Math.floor(n) === n && n >= 0 && n < options.length && ans.indexOf(n) === i
   })
   if (!valid) return null
   return {
@@ -269,27 +272,19 @@ function parseText(text, cat, existIds) {
 
   var list = [], skipped = 0, dup = 0
   items.forEach(function (it, i) {
-    var opts = it.options.map(function (o) { return String(o).trim() }).filter(function (o) { return o })
-    var ans = it.ans.filter(function (n) { return n >= 0 && n < opts.length })
-    if (!it.q.trim() || opts.length < 2 || !ans.length) { skipped += 1; return }
+    var opts = it.options.map(function (o) { return String(o).trim() })
+    var ans = it.ans
+    if (!it.q.trim() || opts.length < 2 || opts.some(function(o){return !o}) || !ans.length) { skipped += 1; return }
 
     var type = ans.length > 1 ? 'multi' : (isJudge(opts) ? 'judge' : 'single')
     // 用题干 hash 做 id：同一段文本重复导入不会重复入库
     var id = 't' + hashId(it.q.trim() + '|' + opts.join('|'))
+    var one = finish(id, it.q.trim(), '', opts, ans, it.exp ? it.exp.trim() : '暂无解析', type, 2, pickCat(cat))
+    if (!one) { skipped += 1; return }
     if (exist[id]) { dup += 1; return }
     exist[id] = 1
 
-    list.push({
-      id: id,
-      cat: cat || 'syntax',
-      type: type,
-      level: 2,
-      q: it.q.trim(),
-      code: '',
-      options: opts,
-      ans: ans,
-      exp: it.exp ? it.exp.trim() : '暂无解析'
-    })
+    list.push(one)
   })
 
   return { list: list, total: items.length, converted: list.length, skipped: skipped, dup: dup }

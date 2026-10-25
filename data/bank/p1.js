@@ -296,15 +296,15 @@ var P1 = [
   },
   {
     id: 's133', cat: 'syntax', type: 'single', level: 2,
-    q: 'RAII 的核心思想是？',
+    q: '一个函数在获取互斥锁后有多个 return 分支。怎样用 RAII 避免遗漏 unlock？',
     options: [
-      '用构造函数申请资源、析构函数释放资源，靠对象生命周期自动管理',
+      '用局部 lock_guard 获取锁，离开作用域时由其析构释放锁',
       '手动记录每次申请和释放',
       '用垃圾回收器回收内存',
       '所有资源都放在全局变量里'
     ],
     ans: [0],
-    exp: 'RAII（Resource Acquisition Is Initialization）把资源绑定到栈对象的生命周期上：构造时获取，析构时释放。因为栈对象在作用域结束、异常抛出时都会保证析构，所以天然做到异常安全。std::lock_guard、std::unique_ptr、std::fstream 都是 RAII 的实例。'
+    exp: '局部 lock_guard 在构造时加锁，正常离开作用域或发生异常栈展开时解锁，避免每个 return 分支都手工清理。RAII 的核心是绑定对象生命周期，并不要求所有资源或管理对象都位于栈上；也不保证 abort 等异常终止路径会析构。'
   },
   {
     id: 's134', cat: 'syntax', type: 'single', level: 3,

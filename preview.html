@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C++ 刷题 · 600 题</title>
+<title>C++ 刷题</title>
+<meta name="cpp-quiz-release" content="3.3.0-web">
+<link rel="icon" href="data:,">
 <style>
   :root{
     --paper:#F6F3EC; --paper2:#EFEAE0; --card:#fff;
-    --ink:#1B1917; --ink2:#6E695F; --ink3:#A8A296; --ink4:#C9C3B6;
+    --ink:#1B1917; --ink2:#6E695F; --ink3:#767064; --ink4:#827b6e;
     --line:rgba(27,25,23,.08); --line2:rgba(27,25,23,.05);
     --accent:#D9542B; --accent2:#B8431F; --accsoft:rgba(217,84,43,.09);
     --ok:#2E7D5B; --oksoft:rgba(46,125,91,.09);
@@ -394,6 +396,7 @@
   /* 截图/静帧模式：加 ?still=1 关掉所有过渡，方便无头浏览器抓最终态 */
   .still *, .still *::before, .still *::after{transition:none!important;animation:none!important}
 </style>
+<link rel="stylesheet" href="preview-learning.css">
 </head>
 <body>
 
@@ -407,62 +410,13 @@
 </div>
 
 <div class="side">
-  <h1>C++ 刷题 · v2.6</h1>
-  <div class="sub">600 题 · 纸感浅色 · 墨黑字 · 单暖橙｜可直接点按交互</div>
-
-  <h2>这一版改了什么</h2>
-  <ul>
-    <li><b>退出能接着做</b>：以前刷到第 30 题退出，再进来又从第 1 题开始；现在每次翻页都记下「第几题 + 已答的答案」，再点同一个入口直接回到那一题，首页格子上还会写「继续 · 第 7 题」</li>
-    <li><b>题数可选</b>：点练习先问「这一轮刷多少题」——10 / 20 / 50 / 全部，不再一律从头刷到尾巴</li>
-    <li><b>没作答也能跳过</b>：底部按钮在没选答案时写「跳过」，选了才写「下一题」，不再弹「请先作答」拦着你</li>
-    <li><b>错题本 / 收藏不再空白</b>：题目 id 索引以前要等在线题库加载后才建，没有缓存时永远是空的，于是「有 12 道错题、点进去一道没有」；现在模块加载即建索引，且查不到时自动清理失效 id</li>
-    <li><b>左上角返回键修好了</b>：之前自定义导航栏的 <code>box-sizing</code> 把按钮顶进了状态栏，灵动岛机型（iPhone 15/16/17 系列）看得见却点不着；现在热区放大到 44pt，底座落在标题行内</li>
-    <li><b>练习页标题不再一律「顺序练习」</b>：从分类进来显示「算法 · 顺序练习」，考试 / 错题 / 收藏各显示自己的名字，题头再补一枚分类小标签</li>
-    <li><b>题库扩到 600 题</b>：语法 / 算法 / 面试各 200，每题都带「为什么」式解析</li>
-    <li><b>题库不打包开源题</b>：开源题运行时在线拉取，包体里只有这 600 道中文题</li>
-    <li><b>新增题库页</b>：每个来源可单独开关、单独刷新，看得见缓存了多少题</li>
-    <li><b>新增书架</b>：6 本免费可读（含中文开源书）+ 6 本经典书目</li>
-    <li><b>界面全换</b>：深色渐变 → 米白纸底 + 衬线数字 + 一个暖橙</li>
-  </ul>
-
-  <h2>配色</h2>
-  <div class="sw"><span class="dotc" style="background:#F6F3EC"></span>#F6F3EC 纸底</div>
-  <div class="sw"><span class="dotc" style="background:#fff"></span>#FFFFFF 卡片</div>
-  <div class="sw"><span class="dotc" style="background:#1B1917"></span>#1B1917 墨黑</div>
-  <div class="sw"><span class="dotc" style="background:#D9542B"></span>#D9542B 暖橙（唯一强调）</div>
-  <div class="sw"><span class="dotc" style="background:#2E7D5B"></span>#2E7D5B 正确</div>
-  <div class="sw"><span class="dotc" style="background:#C1463B"></span>#C1463B 错误</div>
-
-  <h2>跳转</h2>
-  <div class="btnline">
-    <div class="sbtn" onclick="go('home')">首页</div>
-    <div class="sbtn" onclick="go('practice')">答题</div>
-    <div class="sbtn" onclick="go('bank')">题库</div>
-    <div class="sbtn" onclick="go('result')">结果</div>
-    <div class="sbtn" onclick="go('wrong')">错题本</div>
-    <div class="sbtn" onclick="go('import')">导入</div>
-    <div class="sbtn" onclick="go('books')">书架</div>
-  </div>
-
-  <h2>选题数浮层（v2.6）</h2>
-  <div class="btnline">
-    <div class="sbtn" onclick="openPick('seq')">顺序 · 选题数</div>
-    <div class="sbtn" onclick="openPick('seq','algo')">算法 · 选题数</div>
-    <div class="sbtn" onclick="openPick('random')">随机 · 选题数</div>
-  </div>
-
-  <h2>验收标题（同一页不同入口）</h2>
-  <div class="btnline">
-    <div class="sbtn" onclick="startPractice('seq')">顺序练习</div>
-    <div class="sbtn" onclick="startPractice('seq','syntax')">语法 · 顺序</div>
-    <div class="sbtn" onclick="startPractice('seq','algo')">算法 · 顺序</div>
-    <div class="sbtn" onclick="startPractice('random','interview')">面试 · 随机</div>
-    <div class="sbtn" onclick="startPractice('exam')">模拟考试</div>
-    <div class="sbtn" onclick="startPractice('wrong')">错题重练</div>
-    <div class="sbtn" onclick="startPractice('fav')">收藏练习</div>
-  </div>
+  <h1>C++ 刷题</h1>
+  <div class="sub">每天 20 题，按自己的节奏来。</div>
+  <h2>怎么开始</h2>
+  <ul><li>点“开始刷题”，默认从基础开始。</li><li>做完看解析，没懂的题留到错题本复习。</li><li>想专练数组、异常等内容，点“按章节练习”选择。</li></ul>
+  <div class="btnline"><div class="sbtn" onclick="go('home')">首页</div><div class="sbtn" onclick="go('learn')">按章节练习</div><div class="sbtn" onclick="go('wrong')">错题本</div></div>
+  <h2>网页测试版</h2><div class="sub">750 道内置题，按章节练习。进度、错题、收藏保存在当前浏览器，刷新后可继续；不同设备不互通。</div>
 </div>
-
 <script>
   if (location.search.indexOf('still') >= 0) document.documentElement.className += ' still'
 </script>
@@ -475,9 +429,18 @@
 <script src="data/bank/p4.js"></script>
 <script src="data/bank/p5.js"></script>
 <script src="data/bank/p6.js"></script>
-<script>var BANK_ALL = [].concat(P1, P2, P3, P4, P5, P6)</script>
+<script src="data/bank/modern-interview.js"></script>
+<script src="data/bank/systems-interview.js"></script>
+<script src="data/bank/algorithm-interview.js"></script>
+<script>var BANK_ALL = [].concat(P1, P2, P3, P4, P5, P6, MODERN_INTERVIEW, SYSTEMS_INTERVIEW, ALGORITHM_INTERVIEW)</script>
 <script src="data/questions.js"></script>
 <script src="data/books.js"></script>
+<script src="utils/learning.js"></script>
+<script src="preview-learning.js"></script>
+<script src="web-storage.js"></script>
+<script>module = { exports: {} }</script>
+<script src="utils/store.js"></script>
+<script>var WebStore = module.exports</script>
 <script>
 var quiz = window.CppQuizData || module.exports
 var adapter = CppAdapter
@@ -487,21 +450,22 @@ var LEVEL_NAME = { 1:'入门', 2:'进阶', 3:'拔高' }
 var CAT_NAME = {}
 quiz.CATEGORIES.forEach(function (c) { CAT_NAME[c.key] = c.name })
 
-/* -------- 假数据：模拟本地已有学习记录 + 已在线加载的题 -------- */
-var ONLINE = 52
-var MOCK_WRONG = [3, 17, 42, 88, 121, 156, 201, 233, 260, 288, 291, 297]
-var MOCK_FAV = [5, 64, 130]
-var MOCK_ANS = 128
-var MOCK_ACC = 83
+/* Browser statistics are populated by web-runtime.js. */
+var ONLINE = 0
+var MOCK_WRONG = []
+var MOCK_FAV = []
+var MOCK_ANS = 0
+var MOCK_ACC = 0
 
 var state = { page: 'home', mode: 'seq', cat: '', tab: 'wrong', openIdx: -1, log: '', logTone: 'dim', loading: false, srcOn: {} }
 
-var MODE_LABEL = { seq: '顺序练习', random: '随机练习', exam: '模拟考试', wrong: '错题重练', fav: '收藏练习' }
+var MODE_LABEL = { study: 'C++ 刷题', seq: '顺序练习', random: '随机练习', exam: '模拟考试', wrong: '错题重练', fav: '收藏练习' }
 var CAT_SHORT = { syntax: '语法', algo: '算法', interview: '面试', modern: '新特性' }
 
 /* 标题：从分类进来要能看出在练哪一类，否则每个入口都写「顺序练习」会误导 */
 function titleOf() {
   var t = MODE_LABEL[state.mode] || '练习'
+  if(state.mode === 'study' && cur.studyCourse) return CppLearning.courseLabel(cur.studyCourse) + ' · 练习'
   if (state.cat && state.mode !== 'exam') t = (CAT_SHORT[state.cat] || '') + ' · ' + t
   return t
 }
@@ -517,22 +481,26 @@ function shuffle(a) {
   return a
 }
 
-/* 上次停在哪 —— 预览页用假的，真机走 Storage */
-var RESUME_AT = { seq: 6, random: 0, 'seq-syntax': 23, 'seq-algo': 0, 'seq-interview': 0 }
+/* Legacy picker compatibility; actual resume uses stored IDs. */
+var RESUME_AT = {}
 var MODE_CN = { seq: '顺序练习', random: '随机练习', exam: '模拟考试', wrong: '错题重练', fav: '收藏练习' }
 var COUNT_OPTS = [10, 20, 50, 0]
 
 function startPractice(mode, cat, count) {
   cat = cat || ''
-  state.mode = mode
-  state.cat = cat
   var pool = cat ? quiz.QUESTIONS.filter(function (q) { return q.cat === cat }) : quiz.QUESTIONS
-  if (!pool.length) pool = quiz.QUESTIONS
-  if (mode === 'random' || mode === 'exam') cur.list = shuffle(pool).slice(0, count || 20)
-  else if (mode === 'wrong') cur.list = MOCK_WRONG.map(function (i) { return pool[i] }).filter(Boolean)
-  else if (mode === 'fav') cur.list = MOCK_FAV.map(function (i) { return pool[i] }).filter(Boolean)
-  else cur.list = count > 0 ? pool.slice(0, count) : pool.slice()
-  cur.idx = 0; cur.answers = {}; cur.resumed = false
+  if (!pool.length) { flash('暂无可练习的题目'); return }
+  var list
+  if (mode === 'exam') list = CppLearning.exam(pool,20)
+  else if (mode === 'random') list = shuffle(pool).slice(0, count === 0 ? pool.length : (count || 20))
+  else if (mode === 'wrong') list = MOCK_WRONG.map(function (i) { return quiz.QUESTIONS[i] }).filter(Boolean)
+  else if (mode === 'fav') list = MOCK_FAV.map(function (i) { return quiz.QUESTIONS[i] }).filter(Boolean)
+  else list = count > 0 ? pool.slice(0, count) : pool.slice()
+  if(!list.length){flash('暂无可练习的题目');return}
+  cur.list=list
+  state.mode = mode; state.cat = cat
+  cur.studyLevel=0;cur.studyCourse='';cur.startedAt=Date.now();cur.finishedAt=0
+  cur.idx = 0; cur.answers = {}; cur.resumed = false; cur.completed = false
   state.page = mode === 'exam' ? 'exam' : 'practice'
   render()
 }
@@ -586,9 +554,10 @@ function goPick(resumeAt) {
 function render() {
   var el = document.getElementById('screen')
   var html = ''
-  var fn = { home: vHome, practice: vPractice, exam: vPractice, bank: vBank, result: vResult, wrong: vWrong, import: vImport, books: vBooks }[state.page]
+  var fn = { home: vHome, learn: vLearn, practice: vPractice, exam: vPractice, bank: vBank, result: vResult, wrong: vWrong, import: vImport, books: vBooks }[state.page]
   html = fn ? fn() : vHome()
   el.innerHTML = html
+
   el.scrollTop = 0
 }
 
@@ -604,100 +573,7 @@ function esc(s) {
 }
 
 /* ---------------- 首页 ---------------- */
-function vHome() {
-  var total = quiz.QUESTIONS.length + ONLINE
-  var pct = Math.round((MOCK_ANS / total) * 100)
-  var cats = quiz.CATEGORIES.map(function (c, i) {
-    var n = quiz.countByCat(c.key) + (c.key === 'modern' ? ONLINE : 0)
-    return { key: c.key, name: c.name, desc: c.desc, total: n, done: Math.round(n * (0.3 + i * 0.06)) }
-  }).filter(function (c) { return c.total > 0 })
-
-  var tiles = [
-    { m: 'seq', n: total, l: '顺序练习', d: '从头逐题推进' },
-    { m: 'random', n: 20, l: '随机练习', d: '打乱检验手感' },
-    { m: 'wrong', n: MOCK_WRONG.length, l: '错题重练', d: '专攻踩过的坑' },
-    { m: 'fav', n: MOCK_FAV.length, l: '收藏练习', d: '挑出来的重点' }
-  ]
-
-  var recent = [
-    { d: '模拟考试 · 15/20', t: '10/24 21:12', a: 75 },
-    { d: '随机练习 · 17/20', t: '10/23 20:40', a: 85 }
-  ]
-
-  var h = ''
-  h += '<div class="nav"><div class="nav-title">C++ 刷题</div><div class="nav-act" onclick="go(\'bank\')">题库</div></div>'
-
-  h += '<div class="strip">'
-  h += '  <div class="st"><div class="st-n serif">' + MOCK_ANS + '</div><div class="st-l">已练 / ' + total + '</div></div>'
-  h += '  <div class="stline"></div>'
-  h += '  <div class="st"><div class="st-n serif">' + MOCK_ACC + '<span class="st-u">%</span></div><div class="st-l">正确率</div></div>'
-  h += '  <div class="stline"></div>'
-  h += '  <div class="st" onclick="go(\'wrong\')"><div class="st-n serif" style="color:var(--err)">' + MOCK_WRONG.length + '</div><div class="st-l">错题</div></div>'
-  h += '</div>'
-
-  h += '<div class="hero" onclick="startPractice(\'exam\')">'
-  h += '  <div class="spine"></div>'
-  h += '  <div class="kicker acc">Exam · 限时</div>'
-  h += '  <div class="hero-t serif">模拟考试</div>'
-  h += '  <div class="hero-d">随机 20 题 · 20 分钟 · 交卷统一出分</div>'
-  h += '  <div class="hero-cta">→</div>'
-  h += '  <div class="hero-bar"><i style="width:' + pct + '%"></i></div>'
-  h += '  <div class="hero-foot"><span>整体进度 ' + pct + '%</span><span>题库 ' + total + ' 题</span></div>'
-  h += '</div>'
-
-  h += '<div class="sec"><span class="t">练 习</span><span class="s" onclick="go(\'wrong\')">错题本 ' + MOCK_WRONG.length + ' →</span></div>'
-  h += '<div class="grid">'
-  tiles.forEach(function (t) {
-    var at = RESUME_AT[t.m]
-    h += '<div class="tile" onclick="openPick(\'' + t.m + '\')">'
-    h += '  <div class="tile-n serif">' + t.n + '</div>'
-    h += '  <div class="tile-l">' + t.l + '</div>'
-    h += '  <div class="tile-d">' + t.d + '</div>'
-    if (at) h += '  <div class="tile-rs">继续 · 第 ' + (at + 1) + ' 题</div>'
-    h += '</div>'
-  })
-  h += '</div>'
-
-  h += '<div class="sec"><span class="t">分 类</span><span class="s">已答 / 总数</span></div>'
-  h += '<div class="list">'
-  cats.forEach(function (c) {
-    var p = Math.round((c.done / c.total) * 100)
-    var at = RESUME_AT['seq-' + c.key]
-    h += '<div class="cat" onclick="openPick(\'seq\',\'' + c.key + '\')">'
-    h += '  <div class="cat-b"><div class="cat-n">' + c.name + '</div>'
-    h += '  <div class="cat-d">' + c.desc + '</div>'
-    if (at) h += '  <div class="cat-rs">继续 · 第 ' + (at + 1) + ' 题</div>'
-    h += '  <div class="bar"><i style="width:' + p + '%"></i></div></div>'
-    h += '  <div class="cat-v serif"><span class="cur">' + c.done + '</span>/' + c.total + '</div>'
-    h += '</div>'
-  })
-  h += '</div>'
-
-  h += '<div class="sec"><span class="t">最 近</span></div><div class="list">'
-  recent.forEach(function (r) {
-    h += '<div class="rrow"><div><span class="rr-n">' + r.d + '</span><span class="rr-t">' + r.t + '</span></div>'
-    h += '<span class="rr-a serif" style="color:' + (r.a >= 60 ? 'var(--ok)' : 'var(--err)') + '">' + r.a + '%</span></div>'
-  })
-  h += '</div>'
-
-  h += '<div class="sec"><span class="t">读 书</span><span class="s">做累了就看看书</span></div>'
-  h += '<div class="list"><div class="row" onclick="go(\'books\')"><div class="rt"><div class="rn">C++ 书单</div>'
-  h += '  <div class="rd">6 本免费可读 · 6 本经典必读</div></div><div class="rarw">›</div></div></div>'
-
-  h += '<div class="sec"><span class="t">题 库</span><span class="s">在线 ' + ONLINE + ' 题</span></div>'
-  h += '<div class="list">'
-  h += '  <div class="row" onclick="go(\'bank\')"><div class="rt"><div class="rn">在线题库</div>'
-  h += '    <div class="rd">开源题库 · 用时才加载，不占包体</div></div>'
-  h += '    <div class="rv"><b>' + ONLINE + '</b> 题</div><div class="rarw">›</div></div>'
-  h += '  <div class="row" onclick="go(\'import\')"><div class="rt"><div class="rn">粘贴导入</div>'
-  h += '    <div class="rd">从牛客 / 网页复制，自动转成题目</div></div><div class="rarw">›</div></div>'
-  h += '  <div class="row"><div class="rt"><div class="rn">清空学习数据</div>'
-  h += '    <div class="rd">记录、错题、收藏</div></div><div class="rarw">›</div></div>'
-  h += '</div>'
-
-  h += '<div class="foot">C++ 刷题 v2.6 · 内置 ' + quiz.QUESTIONS.length + ' 题 + 在线加载</div>'
-  return h
-}
+function vHome() { return vSimpleHome() }
 
 /* ---------------- 答题页 ---------------- */
 function vPractice() {
@@ -716,7 +592,7 @@ function vPractice() {
   var h = ''
   h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div>'
   h += '<div class="nav-title">' + titleOf() + '</div>'
-  h += '<div class="nav-act">答题卡</div></div>'
+  h += '<div class="nav-act">逐题练习</div></div>'
 
   h += '<div class="pline" style="background:linear-gradient(to right, #1B1917 0%, #1B1917 ' + pct + '%, rgba(27,25,23,.07) ' + pct + '%, rgba(27,25,23,.07) 100%)"></div>'
 
@@ -733,10 +609,11 @@ function vPractice() {
   h += '  <span class="qm-t2">' + (TYPE_NAME[q.type] || '') + '</span>'
   h += '  <span class="qm-t2">' + (LEVEL_NAME[q.level] || '') + '</span>'
   if (CAT_SHORT[q.cat]) h += '  <span class="qm-cat">' + CAT_SHORT[q.cat] + '</span>'
-  h += '  <span class="qm-timer ' + (isExam ? 'exam' : '') + '">' + (isExam ? '18:42' : '00:37') + '</span>'
+  h += '  <span class="qm-timer ' + (isExam ? 'exam' : '') + '">' + webTime() + '</span>'
   h += '</div>'
 
   h += '<div class="qtext">' + esc(q.q) + '</div>'
+  h += '<div class="question-origin">'+esc((state.mode==='study'&&cur.studyCourse?CppLearning.courseLabel(cur.studyCourse):CppLearning.describe(q).labels.join(' / '))+' · '+CppLearning.describe(q).source)+'</div>'
   if (q.code) h += '<div class="code">' + esc(q.code) + '</div>'
 
   h += '<div class="opts">'
@@ -762,6 +639,8 @@ function vPractice() {
     if (!right) h += '  <div class="exp-you">你选的是 ' + (a.picked.length ? a.picked.map(function (n) { return LETTERS[n] }).join('、') : '未作答') + '</div>'
     h += '  <div class="exp-line"></div>'
     h += '  <div class="exp-t">' + esc(q.exp) + '</div>'
+    if(q.followUp) h += '<details class="followup"><summary class="followup-title">延伸理解（选看）</summary><div class="exp-t">'+esc(q.followUp)+'</div></details>'
+    if(q.reference && /^https:\/\//.test(q.reference.url)) h += '<a class="reference-link" target="_blank" rel="noopener noreferrer" href="'+esc(q.reference.url).replace(/"/g,'&quot;')+'">参考资料 · '+esc(q.reference.title)+' ↗</a>'
     h += '</div>'
   }
 
@@ -771,28 +650,25 @@ function vPractice() {
   h += '<div class="bb">'
   h += '  <div class="bb-ico ' + (cur.idx === 0 ? 'off' : '') + '" onclick="prev()">‹</div>'
   h += '  <div class="bb-main" onclick="next()">' + (last ? (isExam ? '交卷' : '完成') : (a.answered ? '下一题' : '跳过')) + '</div>'
-  h += '  <div class="bb-ico" onclick="toggleFav()">☆</div>'
+  h += '  <div class="bb-ico" onclick="toggleFav()">'+(WebStore.isFav(q.id)?'★':'☆')+'</div>'
   h += '</div>'
   return h
 }
 
 function restartNow() {
-  cur.idx = 0; cur.answers = {}; cur.resumed = false
+  cur.startedAt=Date.now();cur.finishedAt=0
+  cur.idx = 0; cur.answers = {}; cur.resumed = false; cur.completed = false
   render()
 }
 
 function pick(i) {
   var q = cur.list[cur.idx]
   var a = cur.answers[q.id] || { picked: [], answered: false }
-  if (state.page === 'exam') {
-    if (a.answered) return
-    a.picked = [i]; a.answered = true
-    cur.answers[q.id] = a; render(); return
-  }
-  if (a.answered) return
+  if (a.answered && state.page !== 'exam') return
   if (q.type === 'multi') {
     var p = a.picked.indexOf(i)
     if (p >= 0) a.picked.splice(p, 1); else a.picked.push(i)
+    a.answered = false
     cur.answers[q.id] = a; render(); return
   }
   a.picked = [i]; a.answered = true
@@ -804,7 +680,7 @@ function pick(i) {
 function submitMulti() {
   var q = cur.list[cur.idx]
   var a = cur.answers[q.id]
-  if (!a || !a.picked.length) return
+  if (!a || !a.picked.length || a.answered) return
   a.answered = true
   a.right = a.picked.slice().sort().join() === q.ans.slice().sort().join()
   render()
@@ -817,11 +693,11 @@ function prev() {
 
 function next() {
   /* v2.6：未作答不再拦着，直接前进（跳过的题最后按错算） */
-  if (cur.idx >= cur.list.length - 1) { state.page = 'result'; render(); return }
+  if (cur.idx >= cur.list.length - 1) { cur.completed = true; cur.finishedAt=Date.now(); if(state.mode === 'study')cur.list.forEach(function(q){PREVIEW_DONE[q.id]=true}); state.page = 'result'; render(); return }
   cur.idx++; render()
 }
 
-function toggleFav() { flash('已收藏') }
+
 
 var flashT = null
 function flash(msg) {
@@ -838,104 +714,6 @@ function flash(msg) {
   clearTimeout(flashT)
   flashT = setTimeout(function () { el.style.opacity = '0' }, 1100)
 }
-
-/* ---------------- 题库页 ---------------- */
-var SRCS = [
-  { id: 'cpp11', name: 'C++11 核心特性', desc: 'auto / lambda / 右值引用 / 智能指针', tag: 'C++', n: 10, time: '10/24', on: true },
-  { id: 'cpp14', name: 'C++14 特性', desc: '泛型 lambda / 变量模板 / make_unique', tag: 'C++', n: 8, time: '10/24', on: true },
-  { id: 'cpp17', name: 'C++17 特性', desc: '结构化绑定 / if constexpr / optional', tag: 'C++', n: 24, time: '10/24', on: true },
-  { id: 'cpp20', name: 'C++20 特性', desc: 'concepts / ranges / 协程 / 三向比较', tag: 'C++', n: 10, time: '10/24', on: true },
-  { id: 'otdb', name: '计算机基础', desc: 'Open Trivia DB 开放接口 · 英文 · 每次随机', tag: '扩充', n: 0, time: '', on: false }
-]
-
-function vBank() {
-  var h = ''
-  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div><div class="nav-title">题库</div></div>'
-  h += '<div class="head"><div class="kicker">Online Bank</div>'
-  h += '<div class="h1 serif">在线题库</div>'
-  h += '<div class="head-d">题不打包进小程序。用的时候才联网拉，拉下来存在本地，下次直接读。</div></div>'
-
-  h += '<div class="sum">'
-  h += '<div class="sum-i"><div class="sum-n serif">' + quiz.QUESTIONS.length + '</div><div class="sum-l">内置</div></div>'
-  h += '<div class="sumline"></div>'
-  h += '<div class="sum-i"><div class="sum-n serif acc">' + ONLINE + '</div><div class="sum-l">在线</div></div>'
-  h += '<div class="sumline"></div>'
-  h += '<div class="sum-i"><div class="sum-n serif">' + (quiz.QUESTIONS.length + ONLINE) + '</div><div class="sum-l">合计</div></div>'
-  h += '</div>'
-
-  h += '<div class="sec"><span class="t">来 源</span><span class="s">已启用 4 个</span></div><div class="list">'
-  SRCS.forEach(function (s) {
-    h += '<div class="src"><div class="src-top"><div class="src-b">'
-    h += '<div class="src-n">' + s.name + '<span class="src-tag">' + s.tag + '</span></div>'
-    h += '<div class="src-d">' + s.desc + '</div></div>'
-    h += '<div class="tg ' + (s.on ? 'on' : '') + '" onclick="toggleSrc(\'' + s.id + '\')"><div class="tg-k"></div></div>'
-    h += '</div><div class="src-foot"><span class="src-st">'
-      + (s.n > 0 ? '已缓存 ' + s.n + ' 题 · ' + s.time : '尚未加载') + '</span>'
-    h += '<span class="src-op" onclick="refreshOne(\'' + s.id + '\')">单独刷新</span></div></div>'
-  })
-  h += '</div>'
-
-  h += '<div style="margin-top:14px"><button class="btn ' + (state.loading ? 'plain' : '') + '" onclick="refreshAll()">'
-    + (state.loading ? '加载中…' : '刷新已启用题库') + '</button></div>'
-  if (state.log) h += '<div class="log ' + state.logTone + '">' + state.log + '</div>'
-
-  h += '<div class="sec"><span class="t">其 它</span></div><div class="list">'
-  h += '<div class="row" onclick="go(\'import\')"><div class="rt"><div class="rn">粘贴导入</div>'
-    + '<div class="rd">牛客、网页、文档里的题，复制过来就能刷</div></div><div class="rarw">›</div></div>'
-  h += '<div class="row"><div class="rt"><div class="rn" style="color:var(--err)">清空在线题目</div>'
-    + '<div class="rd">回到只有内置 ' + quiz.QUESTIONS.length + ' 题的状态</div></div><div class="rarw">›</div></div>'
-  h += '</div>'
-
-  h += '<div class="note">内置题随包发布；在线题靠网络加载，缓存后离线也能刷。'
-    + '真机上线前，请在小程序后台把 cdn.jsdelivr.net 加入 request 合法域名，或填好云开发环境 ID 走云函数代理。</div>'
-  return h
-}
-
-function toggleSrc(id) {
-  SRCS.forEach(function (s) { if (s.id === id) s.on = !s.on })
-  render()
-}
-
-function refreshOne(id) {
-  var s = SRCS.filter(function (x) { return x.id === id })[0]
-  if (!s) return
-  state.loading = true; state.log = '正在连接 ' + s.name + '…'; state.logTone = 'dim'
-  render()
-  setTimeout(function () {
-    state.loading = false
-    s.n = s.n || 10
-    state.log = s.name + '：已是最新，' + s.n + ' 题'
-    state.logTone = 'ok'
-    render()
-  }, 900)
-}
-
-/* 真的去拉一次 jsDelivr，验证在线加载这条路是通的 */
-function refreshAll() {
-  state.loading = true; state.log = '正在连接 cdn.jsdelivr.net…'; state.logTone = 'dim'
-  render()
-  var base = 'https://cdn.jsdelivr.net/gh/celilygt/cpp-quiz@master/content/questions/'
-  var ids = ['cpp11', 'cpp14', 'cpp17', 'cpp20']
-  var exist = quiz.QUESTIONS.map(function (q) { return q.id })
-  var total = 0, ok = 0
-
-  Promise.all(ids.map(function (id) {
-    return fetch(base + id + '.json').then(function (r) { return r.json() })
-      .then(function (j) { var res = adapter.normalize(j, exist); total += res.converted; ok++; return res })
-      .catch(function () { return null })
-  })).then(function () {
-    state.loading = false
-    if (!ok) {
-      state.log = '网络不可达（离线预览）。真机上会走云函数或已配置的合法域名。'
-      state.logTone = 'err'
-    } else {
-      state.log = '真实拉取成功：' + ok + ' / 4 个源，解析出 ' + total + ' 题'
-      state.logTone = 'ok'
-    }
-    render()
-  })
-}
-
 
 /* ---------------- 书架 ---------------- */
 function vBooks() {
@@ -1063,50 +841,6 @@ function closeBook() {
   }, 300)
 }
 
-/* ---------------- 结果 ---------------- */
-function vResult() {
-  var src = cur.list.length ? cur.list : quiz.QUESTIONS
-  var items = src.slice(0, 8)
-  var h = ''
-  h += '<div class="nav"><div class="nav-back" onclick="go(\'home\')">‹</div><div class="nav-title">模拟考试</div></div>'
-  h += '<div class="rs"><div class="kicker">Result</div>'
-  h += '<div class="rs-n"><span class="serif">75</span><span class="rs-u">分</span></div>'
-  h += '<div class="rs-c">不错，错题再巩固一下</div>'
-  h += '<div class="rs-row">'
-  h += '<div class="rs-i"><span class="serif" style="color:var(--ok)">15</span><span class="rs-l">答对</span></div><div class="rsline"></div>'
-  h += '<div class="rs-i"><span class="serif" style="color:var(--err)">5</span><span class="rs-l">答错</span></div><div class="rsline"></div>'
-  h += '<div class="rs-i"><span class="serif">20</span><span class="rs-l">总题数</span></div><div class="rsline"></div>'
-  h += '<div class="rs-i"><span class="serif">12:31</span><span class="rs-l">用时</span></div>'
-  h += '</div></div>'
-
-  h += '<div class="sec"><span class="t">逐 题 解 析</span><span class="s">点开看答案</span></div><div class="items">'
-  items.forEach(function (q, i) {
-    var right = i % 4 !== 1
-    var open = state.openIdx === i
-    h += '<div class="it ' + (open ? 'open' : '') + '" onclick="toggleItem(' + i + ')">'
-    h += '<div class="it-head"><span class="it-no" style="color:' + (right ? 'var(--ok)' : 'var(--err)') + '">' + (i + 1) + '</span>'
-    h += '<span class="it-q">' + esc(q.q) + '</span>'
-    h += '<span class="it-mark" style="color:' + (right ? 'var(--ok)' : 'var(--err)') + '">' + (right ? '✓' : '✕') + '</span></div>'
-    if (open) {
-      h += '<div class="it-body">'
-      if (q.code) h += '<div class="code">' + esc(q.code) + '</div>'
-      h += '<div class="it-l"><span class="k">正确答案</span><span class="v serif" style="color:var(--ok)">'
-        + q.ans.map(function (n) { return LETTERS[n] }).join('、') + '</span></div>'
-      h += '<div class="it-l"><span class="k">你的答案</span><span class="v serif" style="color:'
-        + (right ? 'var(--ok)' : 'var(--err)') + '">' + (right ? q.ans.map(function (n) { return LETTERS[n] }).join('、') : 'B') + '</span></div>'
-      h += '<div class="it-exp">' + esc(q.exp) + '</div>'
-      h += '</div>'
-    }
-    h += '</div>'
-  })
-  h += '</div>'
-
-  h += '<div class="btns"><button class="btn ghost" onclick="go(\'home\')">返回首页</button>'
-    + '<button class="btn" onclick="startPractice(\'exam\')">再来一组</button></div>'
-  h += '<div class="link" onclick="go(\'wrong\')">查看错题本 →</div>'
-  return h
-}
-
 function toggleItem(i) {
   state.openIdx = state.openIdx === i ? -1 : i
   render()
@@ -1137,7 +871,7 @@ function vWrong() {
     h += '<div style="padding:6px 0 0 26px">'
     h += '<span class="tag">' + (CAT_NAME[q.cat] || '') + '</span>'
     h += '<span class="tag">' + (TYPE_NAME[q.type] || '') + '</span>'
-    if (state.tab === 'wrong') h += '<span class="tag err">错 ' + ((i % 3) + 1) + ' 次</span>'
+    if (state.tab === 'wrong') h += '<span class="tag err">错 ' + WebStore.wrongTimes(q.id) + ' 次</span>'
     h += '</div>'
     if (open) {
       h += '<div class="it-body">'
@@ -1145,7 +879,7 @@ function vWrong() {
       h += '<div class="it-l"><span class="k">正确答案</span><span class="v serif" style="color:var(--ok)">'
         + q.ans.map(function (n) { return LETTERS[n] }).join('、') + '</span></div>'
       h += '<div class="it-exp">' + esc(q.exp) + '</div>'
-      h += '<div class="it-rm">' + (state.tab === 'wrong' ? '已掌握，移出错题本' : '取消收藏') + '</div>'
+      h += '<div class="it-rm" onclick="event.stopPropagation();removeReview('+i+')">' + (state.tab === 'wrong' ? '已掌握，移出错题本' : '取消收藏') + '</div>'
       h += '</div>'
     }
     h += '</div>'
@@ -1154,7 +888,7 @@ function vWrong() {
 
   h += '<div class="pb"></div>'
   h += '<div class="bb">'
-  h += '<div class="bb-ico">⌫</div>'
+  h += '<div class="bb-ico"></div>'
   h += '<div class="bb-main" onclick="startPractice(\'' + (state.tab === 'wrong' ? 'wrong' : 'fav') + '\')">'
     + (state.tab === 'wrong' ? '重练错题' : '练习收藏') + '</div>'
   h += '<div class="bb-ico" style="opacity:0">·</div></div>'
@@ -1172,7 +906,7 @@ function vImport() {
   h += '<div class="head"><div class="kicker">Import</div><div class="h1 serif">粘贴导入</div>'
   h += '<div class="head-d">牛客、网页、Word 里的题，整段复制过来，自动切成可刷的题。</div></div>'
 
-  h += '<div class="ta-card"><textarea class="ta" id="ta" placeholder="在此粘贴，支持一次多题：&#10;&#10;1. 题干……&#10;A. 选项 A&#10;B. 选项 B&#10;C. 选项 C&#10;D. 选项 D&#10;答案：B&#10;解析：……">' + (window.TA_TEXT || '') + '</textarea>'
+  h += '<div class="ta-card"><textarea class="ta" id="ta" placeholder="在此粘贴，支持一次多题：&#10;&#10;1. 题干……&#10;A. 选项 A&#10;B. 选项 B&#10;C. 选项 C&#10;D. 选项 D&#10;答案：B&#10;解析：……">' + esc(window.TA_TEXT || '') + '</textarea>'
   h += '<div class="ta-foot"><span class="ta-op" onclick="fillSample()">填入示例</span>'
     + '<span class="ta-op dim" onclick="clearTa()">清空</span></div></div>'
 
@@ -1199,7 +933,7 @@ function vImport() {
         + q.ans.map(function (n) { return LETTERS[n] }).join('、') + '</b></div>'
       h += '</div>'
     })
-    h += '<div style="margin-top:10px"><button class="btn" onclick="flash(\'已导入\')">导入 ' + list.length + ' 题</button></div>'
+    h += '<div style="margin-top:10px"><button class="btn" onclick="importWeb()">导入 ' + list.length + ' 题</button></div>'
   }
 
   h += '<div class="sec"><span class="t">支 持 写 法</span></div><div class="fmt">'
@@ -1239,6 +973,9 @@ function doParse() {
   flash('识别 ' + r.converted + ' 题')
 }
 
+</script>
+<script src="web-runtime.js"></script>
+<script>
 /* 初始化 */
 var _hash = (location.hash || '').replace('#', '')
 /* 支持 #practice / #practice-algo / #practice-random-algo / #wrong / #fav，方便逐入口验收标题 */
@@ -1256,7 +993,6 @@ if (_isPrac) {
     else { _c = _parts[1] }
   }
   startPractice(_m, _c)
-  pick(0)
 } else if (_hash.indexOf('books') === 0) {
   state.page = 'books'
   render()
@@ -1271,26 +1007,6 @@ if (_isPrac) {
   render()
 }
 
-/* 截图 / 验收用：?pick=seq、?pick=seq-algo 直接弹选题数浮层；?resume=1 让练习页显示续做条 */
-var _q = {}
-location.search.replace(/^\?/, '').split('&').forEach(function (kv) {
-  if (!kv) return
-  var a = kv.split('=')
-  _q[decodeURIComponent(a[0])] = decodeURIComponent(a[1] || '')
-})
-if (_q.pick) {
-  var _pp = _q.pick.split('-'), _pm = 'seq', _pc = ''
-  if (_pp.length > 1 && MODE_LABEL[_pp[0]]) { _pm = _pp[0]; _pc = _pp[1] || '' }
-  else if (_pp.length > 1) { _pc = _pp[0] }
-  else if (MODE_LABEL[_pp[0]]) _pm = _pp[0]
-  openPick(_pm, _pc)
-}
-if (_q.resume && (state.page === 'practice' || state.page === 'exam')) {
-  cur.idx = Math.min(6, cur.list.length - 1)
-  cur.resumed = true
-  render()
-}
 </script>
-
 </body>
 </html>

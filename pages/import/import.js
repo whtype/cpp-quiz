@@ -46,7 +46,7 @@ Page({
   },
 
   onCatChange: function (e) {
-    this.setData({ catIndex: Number(e.detail.value) })
+    this.setData({ catIndex: Number(e.detail.value), result: null, previewList: [] })
   },
 
   fillSample: function () {
@@ -96,12 +96,16 @@ Page({
     if (!r || !r.converted) return
     var that = this
 
+    var before = Q.QUESTIONS.length
     store.mergeRemote(r.list)
     Q.setExtra(store.getRemote())
+    var added = Math.max(0, Q.QUESTIONS.length - before)
+    this.setData({ result: null, previewList: [] })
 
     wx.showModal({
-      title: '导入成功',
-      content: '已新增 ' + r.converted + ' 题'
+      title: added ? '导入成功' : '未新增题目',
+      content: '已新增 ' + added + ' 题'
+        + (!added ? '（题目已存在或本地缓存未写入，请检查存储空间）' : '')
         + (r.skipped ? '，跳过 ' + r.skipped + ' 题（缺选项或答案）' : '')
         + '。当前题库共 ' + Q.QUESTIONS.length + ' 题。',
       confirmText: '去练习',

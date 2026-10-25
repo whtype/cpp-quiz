@@ -1,6 +1,7 @@
 var Q = require('../../data/questions')
 var store = require('../../utils/store')
 var ui = require('../../utils/ui')
+var L = require('../../utils/learning')
 
 var TILE = [
   { mode: 'seq', name: '顺序练习', desc: '从头逐题推进' },
@@ -81,12 +82,12 @@ Page({
 
   refresh: function () {
     var s = store.getStats()
-    var answered = s.answered || 0
+    var answered = Q.QUESTIONS.filter(function(q) { return s.records[q.id] && s.records[q.id].t > 0 }).length
     var onlineNum = Q.getExtra().length
 
     // 哪一条练习还有没做完的进度，就在那儿标个「继续」
     var prog = store.getProgress()
-    var resumeKey = store.resumable(prog) ? (prog.mode + '|' + (prog.cat || '')) : ''
+    var resumeKey = store.resumable(prog) && L.key(prog) === L.key({}) ? (prog.mode + '|' + (prog.cat || '')) : ''
     var resumeIdx = store.resumable(prog) ? (prog.idx + 1) : 0
 
     var cats = Q.CATEGORIES.map(function (c) {
@@ -130,6 +131,9 @@ Page({
     var app = getApp()
 
     this.setData({
+      dailyResume: !!(store.resumable(prog) && prog.mode === 'study' && !prog.cat && !prog.track && !prog.topic && !prog.search),
+      dailyIndex: prog ? prog.idx + 1 : 0,
+      dailyCourse: L.courseLabel(store.resumable(prog) && prog.mode === 'study' ? prog.course : store.getPref('learning', {}).course),
       total: Q.QUESTIONS.length,
       baseTotal: Q.QUESTIONS.length - onlineNum,
       answered: answered,
@@ -167,7 +171,7 @@ Page({
     }
 
     var prog = store.getProgress()
-    var canResume = store.resumable(prog) && prog.mode === mode && (prog.cat || '') === cat
+    var canResume = store.resumable(prog) && prog.mode === mode && (prog.cat || '') === cat && L.key(prog) === L.key({})
     var last = store.getPref('count', mode === 'random' ? 20 : 20)
     if (mode === 'wrong' || mode === 'fav') last = store.getPref('count', 0)
 
@@ -208,7 +212,7 @@ Page({
   resumeLast: function () {
     var p = this.data.picker
     var prog = store.getProgress()
-    var count = prog && prog.count ? prog.count : p.count
+    var count = prog && typeof prog.count === 'number' ? prog.count : p.count
     this.setData({ 'picker.open': false })
     wx.navigateTo({
       url: '/pages/practice/practice?mode=' + p.mode + '&cat=' + p.cat + '&count=' + count
@@ -240,6 +244,23 @@ Page({
 
   goBooks: function () {
     wx.navigateTo({ url: '/pages/books/books' })
+  },
+
+  goLearn: function () {
+    wx.navigateTo({ url: '/pages/learn/learn' })
+  },
+
+  goDaily: function () {
+    var p = store.getProgress()
+    var canResume = store.resumable(p) && p.mode === 'study' && !p.cat && !p.track && !p.topic && !p.search
+    var saved = store.getPref('learning', {level:1})
+    var level = canResume ? p.level : ([0,1,2].indexOf(saved.level) >= 0 ? saved.level : 1)
+    wx.navigateTo({url:'/pages/practice/practice?mode=study&count='+(canResume?p.count:20)+(canResume?'':'&restart=1')+L.query({level:level,course:canResume?p.course:(L.COURSES.some(function(c){return c.key===saved.course})?saved.course:'')})})
+  },
+
+  goSaved: function () {
+    if (!store.getFavIds().length) { ui.toast('还没有收藏题目'); return }
+    wx.navigateTo({url:'/pages/practice/practice?mode=fav&count=20'})
   },
 
   resetAll: function () {

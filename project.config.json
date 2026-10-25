@@ -1,7 +1,16 @@
 {
-  "description": "C++ 刷题小程序 —— 语法 / 算法 / 面试真题混合题库",
+  "description": "C++ 刷题 —— 按课程章节学习",
   "packOptions": {
     "ignore": [
+      { "value": "web-runtime.js", "type": "file" },
+      { "value": "web-storage.js", "type": "file" },
+      { "value": "chapters-preview.png", "type": "file" },
+      { "value": ".nojekyll", "type": "file" },
+      { "value": "docs", "type": "folder" },
+      { "value": ".playwright-cli", "type": "folder" },
+      { "value": "preview-learning.js", "type": "file" },
+      { "value": "preview-learning.css", "type": "file" },
+      { "value": "check.js", "type": "file" },
       {
         "value": "preview.html",
         "type": "file"
@@ -64,7 +73,11 @@
     "useApiHook": true,
     "useApiHostProcess": true,
     "babelSetting": {
-      "ignore": [],
+      "ignore": [
+      { "value": "web-runtime.js", "type": "file" },
+      { "value": "web-storage.js", "type": "file" },
+      { "value": "chapters-preview.png", "type": "file" },
+      { "value": ".nojekyll", "type": "file" },],
       "disablePlugins": [],
       "outputPath": ""
     },

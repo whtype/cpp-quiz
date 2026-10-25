@@ -1,143 +1,24 @@
 <view class="page">
-
-  <!-- 导航 -->
-  <view class="nav" style="padding-top:{{statusBar}}px">
-    <view class="nav-title">C++ 刷题</view>
-    <view class="nav-act" bindtap="goBank">题库</view>
+  <view class="nav" style="padding-top:{{statusBar}}px"><view class="nav-title">C++ 刷题</view><view class="nav-act" bindtap="goBank">题库</view></view>
+  <view class="campus-intro"><view class="campus-title serif">每天刷一点，C++ 熟一点。</view><view class="campus-desc">从基础开始，做完一道，弄懂一道。</view></view>
+  <view class="hero simple-home-card">
+    <view class="hero-t serif">{{dailyResume ? '接着上次继续' : '今天刷 20 题'}}</view>
+    <view class="hero-d">{{dailyCourse}} · {{dailyResume ? '已保留答案和进度' : '优先练没做过的题'}}</view>
+    <button class="btn daily-button" bindtap="goDaily">{{dailyResume ? '继续上次 · 第 ' + dailyIndex + ' 题' : '开始刷题'}}</button>
+    <view class="difficulty-link" bindtap="goLearn">按章节练习 / 调整难度 →</view>
   </view>
-
-  <!-- 顶部：三个数字，只用细线分隔 -->
-  <view class="strip fade-up">
-    <view class="st">
-      <view class="st-n serif">{{answered}}</view>
-      <view class="st-l">已练 / {{total}}</view>
-    </view>
-    <view class="st-line"></view>
-    <view class="st">
-      <view class="st-n serif">{{accuracy}}<text class="st-u">%</text></view>
-      <view class="st-l">正确率</view>
-    </view>
-    <view class="st-line"></view>
-    <view class="st" bindtap="goWrong">
-      <view class="st-n serif err-c">{{wrongNum}}</view>
-      <view class="st-l">错题</view>
-    </view>
+  <view class="strip">
+    <view class="st"><view class="st-n serif">{{answered}}</view><view class="st-l">已练题目</view></view><view class="st-line"></view>
+    <view class="st"><view class="st-n serif">{{accuracy}}<text class="st-u">%</text></view><view class="st-l">正确率</view></view><view class="st-line"></view>
+    <view class="st"><view class="st-n serif">{{total}}</view><view class="st-l">题库总数</view></view>
   </view>
-
-  <!-- 主卡：模拟考试（书脊式左侧色条） -->
-  <view class="hero fade-up d1" data-mode="exam" bindtap="goPractice">
-    <view class="hero-spine"></view>
-    <view class="hero-kicker kicker">Exam · 限时</view>
-    <view class="hero-t serif">模拟考试</view>
-    <view class="hero-d">随机 20 题 · 20 分钟 · 交卷统一出分</view>
-    <view class="hero-cta">→</view>
-    <view class="hero-bar">
-      <view class="hero-bar-in" style="width: {{percent}}%"></view>
-    </view>
-    <view class="hero-foot">
-      <text>整体进度 {{percent}}%</text>
-      <text>题库 {{total}} 题</text>
-    </view>
-  </view>
-
-  <!-- 练习方式：2×2 -->
-  <view class="sec">
-    <text class="t">练 习</text>
-    <text class="s" bindtap="goWrong">错题本 {{wrongNum}} →</text>
-  </view>
+  <view class="sec"><text class="t">复习巩固</text></view>
   <view class="grid">
-    <view class="tile" wx:for="{{tiles}}" wx:key="mode" data-mode="{{item.mode}}" bindtap="goPractice">
-      <view class="tile-n serif">{{item.num}}</view>
-      <view class="tile-l">{{item.name}}</view>
-      <view class="tile-d" wx:if="{{item.resume}}"><text class="tile-rs">继续 · 第 {{item.resumeIdx}} 题</text></view>
-      <view class="tile-d" wx:else>{{item.desc}}</view>
-    </view>
+    <view class="tile" bindtap="goWrong"><view class="tile-l">错题本</view><view class="tile-d">{{wrongNum}} 题待复习 →</view></view>
+    <view class="tile" bindtap="goSaved"><view class="tile-l">我的收藏</view><view class="tile-d">{{favNum}} 题 →</view></view>
   </view>
-
-  <!-- 分类 -->
-  <view class="sec">
-    <text class="t">分 类</text>
-    <text class="s">已答 / 总数</text>
-  </view>
-  <view class="list">
-    <view class="cat" wx:for="{{cats}}" wx:key="key" data-mode="seq" data-cat="{{item.key}}" bindtap="goPractice">
-      <view class="cat-b">
-        <view class="cat-n">
-          <text>{{item.name}}</text>
-          <text class="cat-rs" wx:if="{{item.resume}}">继续 · 第 {{item.resumeIdx}} 题</text>
-        </view>
-        <view class="cat-d">{{item.desc}}</view>
-        <view class="bar"><view class="bar-in" style="width: {{item.percent}}%"></view></view>
-      </view>
-      <view class="cat-v serif"><text class="cur">{{item.done}}</text>/{{item.total}}</view>
-    </view>
-  </view>
-
-  <!-- 最近 -->
-  <block wx:if="{{recent.length > 0}}">
-    <view class="sec"><text class="t">最 近</text></view>
-    <view class="list">
-      <view class="rrow" wx:for="{{recent}}" wx:key="index">
-        <view class="rr-l">
-          <text class="rr-n">{{item.desc}}</text>
-          <text class="rr-t">{{item.time}}</text>
-        </view>
-        <text class="rr-a serif {{item.acc >= 60 ? 'ok-c' : 'err-c'}}">{{item.acc}}%</text>
-      </view>
-    </view>
-  </block>
-
-  <!-- 读书 -->
-  <view class="sec">
-    <text class="t">读 书</text>
-    <text class="s">做累了就看看书</text>
-  </view>
-  <view class="list">
-    <view class="row" bindtap="goBooks">
-      <view class="rt">
-        <view class="rn">C++ 书单</view>
-        <view class="rd">6 本免费可读 · 6 本经典必读</view>
-      </view>
-      <view class="rarw">›</view>
-    </view>
-  </view>
-
-  <!-- 题库 -->
-  <view class="sec">
-    <text class="t">题 库</text>
-    <text class="s">{{onlineNum > 0 ? '在线 ' + onlineNum + ' 题' : '在线题库未加载'}}</text>
-  </view>
-  <view class="list">
-    <view class="row" bindtap="goBank">
-      <view class="rt">
-        <view class="rn">在线题库</view>
-        <view class="rd">{{booting ? '首次启动 · 正在静默加载…' : (cloudOn ? '云函数代理已启用' : '开源题库 · 用时才加载，不占包体')}}</view>
-      </view>
-      <view class="rv"><text class="rv-n serif">{{onlineNum}}</text><text class="rv-u">题</text></view>
-      <view class="rarw">›</view>
-    </view>
-    <view class="row" bindtap="goImport">
-      <view class="rt">
-        <view class="rn">粘贴导入</view>
-        <view class="rd">从牛客 / 网页复制，自动转成题目</view>
-      </view>
-      <view class="rarw">›</view>
-    </view>
-    <view class="row" bindtap="resetAll">
-      <view class="rt">
-        <view class="rn">清空学习数据</view>
-        <view class="rd">记录、错题、收藏</view>
-      </view>
-      <view class="rarw">›</view>
-    </view>
-  </view>
-
-  <view class="foot">
-    <text>C++ 刷题 v2.6</text>
-    <text class="dot">·</text>
-    <text>内置 {{baseTotal}} 题 + 在线加载</text>
-  </view>
-
+  <view class="simple-tools"><text bindtap="goBooks">C++ 书单</text><text bindtap="goImport">导入题目</text></view>
+  <view class="foot">按自己的节奏来，先理解，再往前。</view>
   <!-- 开始练习：选题数 / 继续上次 -->
   <view class="mask" wx:if="{{picker.open}}" bindtap="closePicker">
     <view class="sheet" catchtap="noop">

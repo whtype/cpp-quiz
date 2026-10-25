@@ -1,5 +1,13 @@
 # 给接手这个项目的 AI 的说明
 
+> v3.3 网页已改为真实学习记录，发布目标为 https://whtype.github.io/cpp-quiz/ 。web-storage.js 适配 localStorage，web-runtime.js 复用 utils/store.js；不要恢复演示成绩和假收藏。网页与微信数据不互通。发布前额外运行 node tools/test-web.js。
+
+> **最新用户反馈：保持简单，只做 C++ 刷题，不需要岗位方向。v3.1 已把首页改为开始/继续刷题，难度只有基础、进阶、全部；支持按课程章节（数组、异常处理等）选择练习，每轮最多20题优先未练题。章节参数 course 纳入偏好、续做和再练一轮。请不要恢复旧版岗位路线或多层筛选。下方 v3.0 为历史背景。**
+
+> **v3.0（2026-10-25）更新**：当前内置 750 题，新增 `pages/learn/` 学习中心与 `utils/learning.js` 共享筛选。新增三份 `data/bank/*-interview.js` 共 150 道原创场景题，含 source/tags/followUp/reference。当前产品与验证说明以 `README.md`、`docs/QUALITY.md` 为准，下文数量与版本描述为旧版背景。
+>
+> 继续保留旧题 ID、Storage 键、nav content-box 与未答可跳过规则。筛选参数 level/track/topic/search 纳入续做快照；首页覆盖率按不同题目计算；模拟考试分领域抽样。额外运行 `node tools/test-interview.js` 和 `node tools/audit-bank.js`。浏览器有 CommonJS shim，新增共享模块必须也暴露 browser global。旧题只有关键词推断考点，不可声称全部经过核验或来自某公司。
+
 > 这份文件是给外部 AI（GPT / Claude 等）看的。你要改的是**一个已经上线、有真人在用的微信小程序**，
 > 不是从零搭的原型。改之前请把「硬约束」读完，那几条都是踩过坑换来的，破了就会当场宕机。
 
