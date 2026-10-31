@@ -250,6 +250,7 @@ Page({
     wx.navigateTo({ url: '/pages/learn/learn' })
   },
 
+  goInterview:function(){wx.navigateTo({url:'/pages/interview/interview'})},
   goDaily: function () {
     var p = store.getProgress()
     var canResume = store.resumable(p) && p.mode === 'study' && !p.cat && !p.track && !p.topic && !p.search

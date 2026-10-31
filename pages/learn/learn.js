@@ -46,6 +46,7 @@ Page({
     if(!store.resumable(p)||p.mode!=='study'||p.cat||L.key(p)!==L.key(this.data)){this.refresh();return}
     wx.navigateTo({url:'/pages/practice/practice?mode=study&count='+p.count+L.query(this.data)})
   },
+  goInterview:function(){wx.navigateTo({url:'/pages/interview/interview?course='+encodeURIComponent(this.data.course)})},
   goWrong:function(){wx.navigateTo({url:'/pages/wrong/wrong'})},
   goBack:function(){ui.back()}
 })

@@ -1,5 +1,7 @@
 # 给接手这个项目的 AI 的说明
 
+> **2026-11-01 / v2.8**：原 750 道选择题之外新增 24 张独立面试自测卡（12 章、17 口述 + 7 手写），入口 pages/interview 与 preview-interview.js/css，共用 utils/interview.js。自测存储在原偏好 key 的 interviewPractice 字段，不改变选择题成绩；按章节保存草稿与进度，自评后建议 1/3/7 天复习。不提供代码在线运行或自动评分。新增 test-interview-practice.js、test-cpp-content.js 验证。20 道旧题修正标准边界与单选歧义，原 ID 和答案索引保留。保留远程的 JSON 校验和 #wrong/#fav 列表深链修复。
+
 > v3.3 网页已改为真实学习记录，发布目标为 https://whtype.github.io/cpp-quiz/ 。web-storage.js 适配 localStorage，web-runtime.js 复用 utils/store.js；不要恢复演示成绩和假收藏。网页与微信数据不互通。发布前额外运行 node tools/test-web.js。
 
 > **最新用户反馈：保持简单，只做 C++ 刷题，不需要岗位方向。v3.1 已把首页改为开始/继续刷题，难度只有基础、进阶、全部；支持按课程章节（数组、异常处理等）选择练习，每轮最多20题优先未练题。章节参数 course 纳入偏好、续做和再练一轮。请不要恢复旧版岗位路线或多层筛选。下方 v3.0 为历史背景。**

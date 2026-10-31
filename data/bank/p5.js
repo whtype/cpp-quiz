@@ -163,7 +163,7 @@ var P5 = [
   },
   {
     id: 'i116', cat: 'interview', type: 'single', level: 2,
-    q: 'struct A { char c; int i; short s; }; 在 32 位对齐下 sizeof(A) 是？',
+    q: 'struct A { char c; int i; short s; }; 假设 ABI 中 char/int/short 的大小和对齐分别均为 1、4、2 字节，成员按声明顺序采用满足对齐的最小填充，结构体按 4 字节对齐，无额外填充或打包设置，sizeof(A) 是？',
     options: ['7', '8', '12', '16'],
     ans: [2],
     exp: 'char 占 1，为让 int 4 字节对齐要补 3 字节 → 偏移 4 存 int（4~7），short 在偏移 8（2 字节），整体按最大对齐值 4 向上取整到 12。若调整成 int、short、char 的顺序则是 4+2+1=7 → 补齐到 8。这就是「成员顺序影响大小」。'

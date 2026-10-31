@@ -11,5 +11,6 @@
   <view class="simple-progress">{{matched ? '共 ' + matched + ' 题 · 已练 ' + done + ' 题' : '该章节暂无这个难度的题目，请切换为全部难度。'}}</view>
   <button class="btn" disabled="{{!matched}}" bindtap="start">{{canResume ? '继续上次 · 第 ' + resumeIdx + ' 题' : '开始刷题'}}</button>
   <view class="simple-hint">每轮最多 20 题，优先未练题；退出后可以接着做。</view>
+  <view class="simple-review" bindtap="goInterview">练这一章的面试问答 →</view>
   <view class="simple-review" bindtap="goWrong">复习错题 →</view>
 </view>

@@ -1,0 +1,28 @@
+<view class="page interview">
+  <view class="nav" style="padding-top:{{statusBar}}px"><view class="nav-back" bindtap="goBack">‹</view><view class="nav-title">面试自测</view></view>
+  <view class="oral-intro">先用自己的话回答，再对照要点。每轮最多 5 题。</view>
+  <picker range="{{courses}}" range-key="label" value="{{courseIndex}}" bindchange="chooseCourse"><view class="oral-picker">{{courses[courseIndex].label}}<text>⌄</text></view></picker>
+  <view class="oral-progress">已自测 {{summary.attempted}} / {{summary.total}} · 到期复习 {{summary.due}} · 自评能讲清 {{summary.clear}}</view>
+  <block wx:if="{{!completed}}">
+    <view class="oral-meta">{{position}} / {{total}} · {{card.kind}} · 建议 {{card.minutes}} 分钟</view>
+    <view class="oral-title serif">{{card.title}}</view>
+    <view class="oral-prompt">{{card.prompt}}</view>
+    <view class="oral-code" wx:if="{{card.starter}}">{{card.starter}}</view>
+    <view class="oral-note" wx:if="{{card.kind === '手写'}}">在下方或本地编辑器写代码；本页不运行代码。</view>
+    <textarea class="oral-draft" value="{{draft}}" maxlength="12000" placeholder="写下思路或代码（可选，自动保存）" bindinput="inputDraft" />
+    <button class="btn" wx:if="{{!revealed}}" bindtap="reveal">我答完了，看要点</button>
+    <view class="oral-answer" wx:if="{{revealed}}">
+      <view class="oral-heading">回答时应覆盖</view>
+      <view class="oral-point" wx:for="{{card.points}}" wx:key="*this">• {{item}}</view>
+      <view class="oral-heading">常见误区</view>
+      <view class="oral-point" wx:for="{{card.pitfalls}}" wx:key="*this">• {{item}}</view>
+      <view class="oral-heading">再追问一句</view><view class="oral-prompt">{{card.followUp}}</view>
+      <block wx:if="{{card.solution}}"><view class="oral-toggle" bindtap="toggleCode">{{showCode ? '收起参考实现 ↑' : '查看参考实现 ↓'}}</view><view class="oral-code" wx:if="{{showCode}}">{{card.solution}}</view></block>
+      <block wx:if="{{card.checks}}"><view class="oral-heading">自己验证这些边界</view><view class="oral-point" wx:for="{{card.checks}}" wx:key="*this">• {{item}}</view></block>
+      <view class="oral-toggle" bindtap="reference">参考资料 · {{card.reference.title}} ↗</view>
+      <view class="oral-note">按刚才的独立回答自评；读懂答案还不等于会回答。</view>
+      <view class="oral-ratings"><button class="oral-rate" data-id="{{card.id}}" data-grade="0" bindtap="rate">还不会<text>明天复习</text></button><button class="oral-rate" data-id="{{card.id}}" data-grade="1" bindtap="rate">需巩固<text>3 天后复习</text></button><button class="oral-rate" data-id="{{card.id}}" data-grade="2" bindtap="rate">能讲清<text>7 天后复习</text></button></view>
+    </view>
+  </block>
+  <view class="oral-finish" wx:else><view class="oral-title serif">这一轮自测完成</view><view class="oral-prompt">隔几天不看答案再答一次，确认自己能解释原因和边界。</view><view class="oral-note">复习日期是建议；每次进入会优先安排到期题。记录为自评，不代表自动判题或面试通过率。</view><button class="btn" bindtap="nextRound">再练一组</button></view>
+</view>

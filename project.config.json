@@ -2,6 +2,8 @@
   "description": "C++ 刷题 —— 按课程章节学习",
   "packOptions": {
     "ignore": [
+      { "value": "preview-interview.js", "type": "file" },
+      { "value": "preview-interview.css", "type": "file" },
       { "value": "web-runtime.js", "type": "file" },
       { "value": "web-storage.js", "type": "file" },
       { "value": "chapters-preview.png", "type": "file" },

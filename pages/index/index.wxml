@@ -7,6 +7,7 @@
     <button class="btn daily-button" bindtap="goDaily">{{dailyResume ? '继续上次 · 第 ' + dailyIndex + ' 题' : '开始刷题'}}</button>
     <view class="difficulty-link" bindtap="goLearn">按章节练习 / 调整难度 →</view>
   </view>
+  <view class="exam-entry" bindtap="goInterview"><view><view class="exam-title">面试自测</view><view class="exam-desc">练口述、写代码，看看能不能讲清楚</view></view><text>→</text></view>
   <view class="strip">
     <view class="st"><view class="st-n serif">{{answered}}</view><view class="st-l">已练题目</view></view><view class="st-line"></view>
     <view class="st"><view class="st-n serif">{{accuracy}}<text class="st-u">%</text></view><view class="st-l">正确率</view></view><view class="st-line"></view>

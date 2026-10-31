@@ -1,0 +1,18 @@
+.interview { padding-bottom: 60rpx; }
+.oral-intro { margin: 28rpx 0 24rpx; font-size: 26rpx; color: var(--ink-2); line-height: 1.8; }
+.oral-picker { display: flex; justify-content: space-between; padding: 24rpx; border: 1rpx solid var(--line); border-radius: 16rpx; background: white; font-size: 28rpx; }
+.oral-progress { margin: 18rpx 0 36rpx; color: var(--ink-2); font-size: 22rpx; line-height: 1.7; }
+.oral-meta { font-size: 23rpx; color: var(--accent); }
+.oral-title { margin: 16rpx 0; font-size: 38rpx; line-height: 1.5; font-weight: 600; }
+.oral-prompt { font-size: 28rpx; line-height: 1.85; white-space: pre-wrap; }
+.oral-code { padding: 24rpx; border-radius: 14rpx; background: #ede9e1; font-family: Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 24rpx; line-height: 1.7; margin: 20rpx 0; }
+.oral-draft { box-sizing: border-box; width: 100%; height: 260rpx; padding: 24rpx; border: 1rpx solid var(--line); border-radius: 16rpx; margin: 24rpx 0; background: white; font-family: Consolas, monospace; font-size: 26rpx; line-height: 1.6; }
+.oral-answer { margin-top: 32rpx; padding-top: 8rpx; border-top: 1rpx solid var(--line); }
+.oral-heading { font-size: 28rpx; font-weight: 600; margin: 26rpx 0 16rpx; }
+.oral-point { font-size: 27rpx; line-height: 1.85; margin-bottom: 12rpx; }
+.oral-toggle { color: var(--accent); padding: 22rpx 0; font-size: 25rpx; line-height: 1.7; }
+.oral-note { color: var(--ink-2); font-size: 23rpx; line-height: 1.8; margin: 20rpx 0; }
+.oral-ratings { display: flex; gap: 12rpx; margin-top: 20rpx; }
+.oral-rate { flex: 1; margin: 0; padding: 20rpx 6rpx; font-size: 26rpx; line-height: 1.8; border: 1rpx solid var(--line); border-radius: 14rpx; background: white; }
+.oral-rate text { display: block; color: var(--ink-2); font-size: 21rpx; }
+.oral-finish { padding-top: 24rpx; }

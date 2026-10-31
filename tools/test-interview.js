@@ -226,6 +226,18 @@ test('browser home resume and repeat keep the active chapter despite picker chan
   assert.ok(context.cur.list.every(function(q){return learning().select([q],{course:'arrays'}).length===1}))
 })
 
+test('native interview drafts and self-assessment survive reload without changing quiz scores', function () {
+  var p=page('interview');p.onLoad({course:'arrays'});var id=p.data.card.id
+  assert.strictEqual(p.data.revealed,false)
+  p.inputDraft({detail:{value:'my array answer'}});p.onUnload()
+  var restored=page('interview');restored.onLoad({course:'arrays'});assert.strictEqual(restored.data.draft,'my array answer')
+  restored.rate({currentTarget:{dataset:{id:id,grade:'2'}}});assert.strictEqual(restored.data.card.id,id)
+  restored.reveal();restored.rate({currentTarget:{dataset:{id:id,grade:'1'}}})
+  restored.rate({currentTarget:{dataset:{id:id,grade:'2'}}})
+  assert.strictEqual(restored.model.records[id].attempts,1);assert.strictEqual(store.getStats().answered,0)
+  var next=page('interview');next.onLoad({course:'arrays'});assert.notStrictEqual(next.data.card.id,id)
+})
+
 Date.now = originalNow
 Q.setExtra([])
 console.log(passed + ' passed, ' + failed + ' failed')

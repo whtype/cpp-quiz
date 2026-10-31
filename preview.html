@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C++ 刷题</title>
-<meta name="cpp-quiz-release" content="3.3.0-web">
+<meta name="cpp-quiz-release" content="2.8.0-interview">
 <link rel="icon" href="data:,">
 <style>
   :root{
@@ -397,6 +397,7 @@
   .still *, .still *::before, .still *::after{transition:none!important;animation:none!important}
 </style>
 <link rel="stylesheet" href="preview-learning.css">
+<link rel="stylesheet" href="preview-interview.css">
 </head>
 <body>
 
@@ -415,7 +416,7 @@
   <h2>怎么开始</h2>
   <ul><li>点“开始刷题”，默认从基础开始。</li><li>做完看解析，没懂的题留到错题本复习。</li><li>想专练数组、异常等内容，点“按章节练习”选择。</li></ul>
   <div class="btnline"><div class="sbtn" onclick="go('home')">首页</div><div class="sbtn" onclick="go('learn')">按章节练习</div><div class="sbtn" onclick="go('wrong')">错题本</div></div>
-  <h2>网页测试版</h2><div class="sub">750 道内置题，按章节练习。进度、错题、收藏保存在当前浏览器，刷新后可继续；不同设备不互通。</div>
+  <h2>网页测试版</h2><div class="sub">750 道选择题 + 24 道面试自测，按章节练习。进度、错题、收藏保存在当前浏览器，刷新后可继续；不同设备不互通。</div>
 </div>
 <script>
   if (location.search.indexOf('still') >= 0) document.documentElement.className += ' still'
@@ -436,6 +437,8 @@
 <script src="data/questions.js"></script>
 <script src="data/books.js"></script>
 <script src="utils/learning.js"></script>
+<script src="utils/interview.js"></script>
+<script src="data/interview-cards.js"></script>
 <script src="preview-learning.js"></script>
 <script src="web-storage.js"></script>
 <script>module = { exports: {} }</script>
@@ -554,7 +557,7 @@ function goPick(resumeAt) {
 function render() {
   var el = document.getElementById('screen')
   var html = ''
-  var fn = { home: vHome, learn: vLearn, practice: vPractice, exam: vPractice, bank: vBank, result: vResult, wrong: vWrong, import: vImport, books: vBooks }[state.page]
+  var fn = { home: vHome, learn: vLearn, interview: vInterview, practice: vPractice, exam: vPractice, bank: vBank, result: vResult, wrong: vWrong, import: vImport, books: vBooks }[state.page]
   html = fn ? fn() : vHome()
   el.innerHTML = html
 
@@ -975,6 +978,7 @@ function doParse() {
 
 </script>
 <script src="web-runtime.js"></script>
+<script src="preview-interview.js"></script>
 <script>
 /* 初始化 */
 var _hash = (location.hash || '').replace('#', '')

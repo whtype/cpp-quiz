@@ -27,3 +27,16 @@ var imported={id:'web-test',cat:'syntax',level:1,type:'single',q:'测试导入',
 last.PARSE_LIST=[imported];last.importWeb();assert.ok(last.quiz.getById('web-test'));assert.ok(boot().quiz.getById('web-test'))
 last.PARSE_LIST=[imported];last.importWeb();assert.strictEqual(last.quiz.getExtra().length,1)
 console.log('PASS web: real scoring, idempotent answers, favorites, refresh resume, skipped wrong items, results, chapter repeat, persistent import')
+
+var choiceCount=last.WebStore.getStats().answered,choiceIds=last.cur.list.map(function(q){return q.id}).join(',')
+last.openInterview('arrays');var oral=last.CppInterview.view(last.CppInterviewCards,last.ORAL_STATE,Date.now()),oralId=oral.card.id
+assert.ok(!oral.revealed);last.oralDraft(oralId,'my independent answer <tag>');last.oralReveal(oralId)
+assert.ok(last.vInterview().indexOf('my independent answer &lt;tag&gt;')>=0)
+var oralReload=boot();oralReload.openInterview('arrays')
+assert.strictEqual(oralReload.CppInterview.view(oralReload.CppInterviewCards,oralReload.ORAL_STATE,Date.now()).draft,'my independent answer <tag>')
+oralReload.oralRate(oralId,1);oralReload.oralRate(oralId,2)
+assert.strictEqual(oralReload.ORAL_STATE.records[oralId].attempts,1)
+assert.strictEqual(oralReload.WebStore.getStats().answered,choiceCount)
+assert.strictEqual(oralReload.cur.list.map(function(q){return q.id}).join(','),choiceIds)
+oralReload.openInterview('exceptions');assert.strictEqual(oralReload.CppInterview.view(oralReload.CppInterviewCards,oralReload.ORAL_STATE,Date.now()).card.course,'exceptions')
+console.log('PASS web interview: chapter selection, hidden answer, escaped persisted draft, rating idempotence, separate choice scores and progress')

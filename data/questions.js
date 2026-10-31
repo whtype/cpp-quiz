@@ -37,11 +37,11 @@ const CORE = [
   },
   {
     id: 's03', cat: 'syntax', type: 'single', level: 2,
-    q: '在 64 位系统下，sizeof(s)、strlen(p)、sizeof(p) 分别是？',
+    q: '假设目标平台 sizeof(char*) == 8，sizeof(s)、strlen(p)、sizeof(p) 分别是？',
     code: 'char s[] = "hello";\nchar *p = s;',
     options: ['6、5、8', '5、5、8', '6、6、4', '5、5、4'],
     ans: [0],
-    exp: 's 是数组，sizeof(s) 得到整个数组大小 = 6 字节（含结尾 \'\\0\'）；strlen 统计到 \'\\0\' 之前，为 5；p 是指针，64 位下 sizeof 为 8。数组名与指针在 sizeof 下表现不同，这是经典考点。'
+    exp: 's 是数组，sizeof(s) 得到整个数组大小 = 6 字节（含结尾 \'\\0\'）；strlen 统计到 \'\\0\' 之前，为 5；p 是 char*，按题设 sizeof(p) 为 8。指针大小由具体实现决定，不能仅凭“64 位系统”推导。'
   },
   {
     id: 's04', cat: 'syntax', type: 'multi', level: 2,
@@ -153,17 +153,17 @@ const CORE = [
   },
   {
     id: 's15', cat: 'syntax', type: 'single', level: 1,
-    q: 'C++ 中 sizeof(空类) 的结果是？',
-    options: ['0', '1', '4', '取决于是否有虚函数'],
+    q: 'C++ 标准对 sizeof(空类) 的保证是？',
+    options: ['一定为 0', '至少 1 字节，常见实现为 1', '一定为 4 字节', '一定等于指针大小'],
     ans: [1],
-    exp: '空类大小为 1 字节。C++ 标准规定任意两个不同对象的地址必须不同，若大小为 0 则数组元素会重叠，因此编译器会插入 1 字节占位。'
+    exp: '空类的 sizeof 至少为 1，常见实现中普通空类为 1 字节；标准不保证恰好为 1，额外的对齐要求等可使它更大。完整空类对象需要占据空间；空基类优化允许基类子对象不额外占空间，但不改变该空类自身的 sizeof。'
   },
   {
     id: 's16', cat: 'syntax', type: 'judge', level: 2,
-    q: '一个类中只要声明了虚函数，该类对象通常会额外包含一个指向虚函数表（vtable）的指针 vptr，因此对象大小至少增加一个指针的大小。',
+    q: '主流实现通常通过 vptr 支持虚函数，但不能据此断言每次给类增加虚函数，对象大小都至少增加一个指针的大小。',
     options: ['正确', '错误'],
     ans: [0],
-    exp: '正确。vptr 由编译器隐式加入，通常在对象起始位置（单继承下）。注意：这属于实现细节而非标准规定，但主流编译器（GCC/Clang/MSVC）都是这么做的。'
+    exp: '正确。已有虚函数的类增加虚函数，通常只改变虚表；派生类也可能复用基类的 vptr。首次引入虚函数时，大小变化还受原有填充、对齐和继承布局影响。vptr 与虚表是常见 ABI 实现机制，C++ 标准不规定这种布局。'
   },
   {
     id: 's17', cat: 'syntax', type: 'judge', level: 2,
@@ -718,10 +718,10 @@ const CORE = [
   },
   {
     id: 's31', cat: 'syntax', type: 'judge', level: 2,
-    q: '被 noexcept 修饰的函数如果抛出异常，程序会调用 std::terminate 直接终止，而不会正常展开栈。',
+    q: '当异常试图逸出 noexcept(true) 函数时，会调用 std::terminate；函数内部抛出并自行捕获异常不违反 noexcept 承诺。',
     options: ['正确', '错误'],
     ans: [0],
-    exp: '正确。noexcept 是给编译器的承诺，可用于优化（如 vector 扩容时选择移动而非拷贝）。析构函数默认隐式 noexcept。'
+    exp: '正确。noexcept（等价于 noexcept(true)）约束的是异常不能逸出函数，内部可以抛出并捕获。违反承诺时会调用 std::terminate，调用前是否展开栈是实现定义的。析构函数通常隐式 noexcept，但基类或成员的析构函数可能改变其异常说明。'
   },
   {
     id: 's32', cat: 'syntax', type: 'single', level: 2,
@@ -2748,12 +2748,12 @@ const CORE = [
     q: '对含有 std::string 成员或虚函数的对象使用 memset(this, 0, sizeof(*this)) 初始化，结果是？',
     options: [
       '安全且高效',
-      '未定义行为：会破坏对象内部状态（如把字符串指针清零、覆盖 vptr）',
+      '不能保证合法初始化，可能破坏对象内部状态并导致未定义行为',
       '等同于默认构造',
       '只是性能略差'
     ],
     ans: [1],
-    exp: '只有平凡可拷贝（trivially copyable）类型才能用 memset/ memcpy 处理。非平凡类型必须走构造函数；判断可用 std::is_trivially_copyable。'
+    exp: '应通过构造函数和成员初始化列表初始化这类对象，清零字节可能破坏 std::string 或虚函数机制所需的内部状态。平凡可拷贝只提供满足条件时复制和恢复对象表示的保证，不保证全零字节是合法值或等价于默认初始化。memcpy 复制有效对象表示与 memset 写入全零字节不能混为一谈。'
   },
   {
     id: 's84', cat: 'syntax', type: 'single', level: 2,
@@ -2858,7 +2858,7 @@ const CORE = [
     q: '移动构造函数应尽可能声明为 noexcept，否则 std::vector 扩容时可能因为无法保证不抛异常而退回使用拷贝。',
     options: ['正确', '错误'],
     ans: [0],
-    exp: '正确。vector 需要在扩容时提供强异常保证，只有移动操作不抛时才敢用移动；否则改用拷贝（可能显著变慢）。这是"随手加 noexcept"收益最明显的场景之一。'
+    exp: '正确。在需要迁移已有元素的扩容操作中，若移动可能抛异常且元素可拷贝，vector 通常使用拷贝以维持强异常保证；若元素不可拷贝，仍可能使用会抛异常的移动，此时一旦移动抛出，强异常保证可能不再成立。只有确实能保证异常不逸出时才应声明 noexcept，不能为了性能随意添加。'
   },
   {
     id: 's94', cat: 'syntax', type: 'single', level: 2,
